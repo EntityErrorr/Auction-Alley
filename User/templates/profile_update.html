@@ -1,0 +1,22 @@
+{% extends "basee.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+    <br>
+    <br>
+    <br>
+    <br>
+    <div class="container d-flex justify-content-center align-items-center">
+        <div class="card p-4 border-primary rounded shadow">
+            <h1 class="text-danger fw-bold fs-4 p-5">Update Profile</h1>
+            <form method="post" style="width: 50%; margin: auto;">
+                {% csrf_token %}
+                {{ profile_form | crispy }}
+            
+                <button class="btn btn-primary mb-5">Submit</button>
+            </form>
+
+        </div>
+    </div>
+
+{% endblock content %}

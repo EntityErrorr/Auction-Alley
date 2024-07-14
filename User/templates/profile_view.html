@@ -1,0 +1,76 @@
+{% extends 'basee.html' %}
+
+{% block content %}
+
+    <style>
+        /* Custom CSS for the profile view */
+        .profile-card {
+            background-color: rgba(249, 240, 223, 0.5); /* Transparent background color */
+            padding: 20px; /* Padding */
+            border-radius: 15px; /* Rounded corners */
+            box-shadow: 0 4px 8px 0 rgba(98, 62, 11, 0.2); /* Shadow effect */
+            color: white; /* Text color */
+            width: 360px; /* Card width */
+            align-items: left; /* Center content vertically */
+            align-self: center; /* Center card horizontally */
+        }
+
+        /* Custom CSS for the profile card title */
+        .profile-card p {
+            text-align: left; /* Center text */
+            margin-bottom: 20px; /* Bottom margin */
+            font-size: 20px; /* Font size */
+            font-weight: 10; /* Bold text */
+            color: rgb(40, 42, 95);
+        }
+
+        /* Custom CSS for profile details */
+        .profile-details {
+            text-align: left; /* Align text to the left */
+            margin-bottom: 10px; /* Bottom margin */
+        }
+
+        /* Custom CSS for update button */
+        .update-button {
+            background: linear-gradient(130deg, rgb(40, 42, 95), rgb(103, 103, 134), rgb(40, 42, 95)); /* Gradient background */
+            border: none; /* Remove border */
+            color: white; /* Text color */
+            padding: 10px 25px; /* Padding */
+            text-align: center; /* Center text */
+            text-decoration: none; /* Remove underline */
+            display: inline-block; /* Make it inline block */
+            font-size: 18px; /* Font size */
+            border-radius: 10px; /* Rounded corners */
+            cursor: pointer; /* Add cursor pointer */
+            transition: background-color 0.3s; /* Add transition for hover effect */
+        }
+
+        /* Hover effect for update button */
+        .update-button:hover {
+            background-color: #001f3f; /* Darker gradient background color */
+        }
+    </style>
+
+    <br><br><br><br>
+    {% if user.is_authenticated %}
+    <div class="container d-flex justify-content-center align-items-center">
+        <div class="card p-4 border-primary rounded shadow profile-card" style="width: 400px; ">
+            <h4 style="margin-left: 30%; margin-bottom: 12px; font-size: 30px; font-weight: bold; background: linear-gradient(130deg, rgb(40, 42, 95), rgb(99, 99, 143), rgb(24, 25, 57)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                My Profile
+            </h4><br>
+            <p><span style="font-weight: bold;">Name: </span> {{ profile.user.username |title }}</p>
+            <p><span style="font-weight: bold;">Email: </span> {{ profile.user.email }}</p>
+            <p><span style="font-weight: bold;">Phone: </span>{{ profile.phone }}</p>
+            <p><span style="font-weight: bold;">Address: </span>{{ profile.address }}</p>
+            <a href="{% url 'User:profile_update' %}" class="btn btn-primary update-button" style="margin-left: 30%;">Update</a>
+        </div>
+    </div><br>
+    {% else %}
+    <div class="container d-flex justify-content-center align-items-center">
+        <div class="card p-4 border-primary rounded shadow" style="background-color: #001f3f; width: 350px; ">
+            <h2 class="card-title text-light mb-4">Welcome to Auction House</h2>
+            <p>Please register first</p>
+        </div>
+    </div>
+    {% endif %}
+{% endblock %}

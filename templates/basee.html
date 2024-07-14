@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+    crossorigin="anonymous">
+
+  <!-- Bootstrap JS with Popper.js -->
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+    integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+    integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
+    crossorigin="anonymous"></script>
+  <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+  <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+      rel="stylesheet"
+    />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'base.css' %}">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+  <title>Auction Alley</title>
+</head>
+
+<body>
+    
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="{% url 'User:home' %}">Auction Alley</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="{% url 'User:home' %}">Home</a>
+              </li>
+
+              <li class="nav-item">
+                <a class="nav-link" href="#">About us</a>
+              </li>
+
+                {% if user.is_authenticated %}
+                    {% if request.user.is_staff%}
+                        {% if request.user.is_superuser %}
+                            <li class="nav-item">
+                                <a class="nav-link" aria-current="page" href="">Admin Panel</a>
+                            </li>
+                        {% else %}
+                            <li class="nav-item">
+                                <a class="nav-link" aria-current="page" href="">Manage Slot</a>
+                            </li>
+                        {% endif %}
+                    {% endif %}
+                {% endif %} 
+                {% if user.is_authenticated %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Profile
+                        </a>
+                        <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{% url 'User:profile_view' %}">View Profile</a></li>
+                        <li><a class="dropdown-item" href="#">Change Password</a></li>
+                        <li><a class="dropdown-item" href="#">Wishlist</a></li>
+                        <li><a class="dropdown-item" href="#">Winning bids</a></li>
+                        <li><a class="dropdown-item" href="{% url 'User:user_logout' %}">Logout</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="auctionDropdown" role="button" data-bs-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false">
+                            Auction
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="auctionDropdown">
+                            <li><a class="dropdown-item" href="#">Upcoming Bidding</a></li>
+                            <li><a class="dropdown-item" href="#">Live Bidding</a></li>
+                            <li><a class="dropdown-item" href="#">Past Biddings</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " href="#">Financial Advice</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " href="#">Sell House</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " href="#">Refund</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " href="#">Generate Bill</a>
+                    </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a href="{% url 'User:register' %}" class="nav-link">SignUp</a>
+                        </li>
+                        <li class="nav-item">  
+                            <a href="{% url 'User:user_login' %}" class="nav-link">Login</a>
+                        </li>
+                    {% endif %}
+            </ul>
+
+          </div>
+        </div>
+      </nav>
+
+
+    <div class="flex-1 container">
+        {% block content %}
+          <p>This is the base template content.</p>
+        {% endblock %}
+      </div>
+
+    <footer style="background-color: #001f3f;" class="text-white mt-4">
+        <div class="mx-auto py-8 px-8 flex flex-wrap justify-between items-start">
+          <div class="w-full lg:w-2/3 pr-4 mb-4 lg:mb-0">
+            <div class="mb-4">
+              <h3 class="text-sm font-semibold mb-2">Price Information</h3>
+              <p class="text-xs text-left mb-2">
+                *Guides are provided as an indication of each seller's minimum
+                expectation. They are not necessarily figures which a property
+                will sell for and may change at any time prior to the auction.
+                Each property will be offered subject to a Reserve (a figure below
+                which the Auctioneer cannot sell the property during the auction)
+                which we expect will be set within the Guide Range or no more than
+                10% above a single figure Guide.
+              </p>
+            </div>
+            <div class="mb-4">
+              <h3 class="text-sm font-semibold mb-2">
+                Additional Fees Information
+              </h3>
+              <p class="text-xs text-left mb-2">
+                *Please be aware there may be additional fees payable on top of
+                the final sale price. This include and are not limited to
+                administration charges and buyer's premium fees payable on
+                exchange, and disbursements payable on completion. Please ensure
+                you check the property information page for a list of any relevant
+                additional fees as well as reading the legal pack for any
+                disbursements.
+              </p>
+            </div>
+          </div>
+          <div
+            class="w-full my-auto lg:w-1/3 flex flex-col justify-center items-center border-white lg:border-l-2"
+          >
+            <div class="mb-1 flex flex-col justify-center items-center">
+              <div class="flex justify-center lg:justify-end">
+                <a
+                  title="FB"
+                  href="#"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="btn btn-outline-white mr-2"
+                >
+                  <i class="fab fa-facebook-f mx-2"></i>
+                </a>
+                <a
+                  title="Twit"
+                  href="#"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="btn btn-outline-white mx-2"
+                >
+                  <i class="fab fa-twitter mx-2"></i>
+                </a>
+                <a
+                  title="Insta"
+                  href="#"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="btn btn-outline-white mr-2"
+                >
+                  <i class="fab fa-instagram mx-2"></i>
+                </a>
+              </div>
+              <h3 class="text-lg font-semibold mb-2 text-center lg:text-left">
+                Connect with us
+              </h3>
+            </div>
+            <div class="mb-1">
+              <div class="flex justify-center lg:justify-end">
+                <a
+                  href="/"
+                  class="mx-4 text-white hover:text-gray-200 border-b-2 border-transparent hover:border-white"
+                >
+                  Terms & Conditions
+                </a>
+                <p>|</p>
+                <a
+                  href="/" class="mx-4 text-white hover:text-gray-200 border-b-2 border-transparent hover:border-white"
+                >
+                  Privacy Policy
+                </a>
+              </div>
+            </div>
+            <div class="text-center lg:text-right">
+              <p>&copy; 2024 Auction Alley</p>
+            </div>
+          </div>
+        </div>
+    </footer>
+</body>

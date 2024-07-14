@@ -1,0 +1,47 @@
+{% extends 'basee.html' %}
+
+{% block content %}
+<style>
+
+
+    .container {
+
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+    }
+ 
+    .error-messages {
+        margin-top: 10px;
+        text-align: center;
+    }
+
+    .error-message {
+        background-color: #f8d7da;
+        color: #721c24;
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 5px;
+        width: 50%;
+        margin-left: 25%;
+    }
+</style>
+<br><br>
+<div class="container">
+    <h1>OTP Verification</h1>
+    <form  method="POST">
+        {% csrf_token %}
+        <label for="otp" style="font-weight: 500;">Enter OTP</label><br>
+        <input type="text" id="otp" name="otp" required><br><br>
+        <input style="background-color: rgb(8, 8, 60); color: white;" type="submit" value="Verify">
+    </form>
+    {% if messages %}
+        <div class="error-messages">
+            {% for message in messages %}
+                <div class="error-message">{{ message }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+
+{% endblock %}
