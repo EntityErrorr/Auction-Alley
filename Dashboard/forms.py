@@ -4,12 +4,7 @@ from .models import Auction, Bid, Comment
 
 # create a new auction listing model form class
 
-# create a new Bid model form class
-class NewBidForm(ModelForm):
-    # specify the name of model to use
-    class Meta:
-        model = Bid
-        fields = ["bid_price"]
+
 
 # create a new Comment model from class
 class NewCommentForm(ModelForm):
@@ -31,3 +26,16 @@ class NewCommentForm(ModelForm):
                         "rows": 4
                     }
         )}
+
+
+# forms.py
+from django import forms
+from .models import Bid
+
+class BidForm(forms.ModelForm):
+    class Meta:
+        model = Bid
+        fields = ['bid_price']
+        widgets = {
+            'bid_price': forms.NumberInput(attrs={'min': 1, 'step': 1}),
+        }
