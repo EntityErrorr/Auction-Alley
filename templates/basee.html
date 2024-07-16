@@ -83,13 +83,12 @@
                         </ul>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="auctionDropdown" role="button" data-bs-toggle="dropdown"
+                        <a class="nav-link dropdown-toggle" href="{% url 'User:home' %}" id="auctionDropdown" role="button" data-bs-toggle="dropdown"
                             aria-haspopup="true" aria-expanded="false">
                             Auction
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="auctionDropdown">
-                            <li><a class="dropdown-item" href="#">Upcoming Bidding</a></li>
-                            <li><a class="dropdown-item" href="#">Live Bidding</a></li>
+                            <li><a class="dropdown-item" href="{% url 'dashboard:LiveAuction' %}">Live Bidding</a></li>
                             <li><a class="dropdown-item" href="#">Past Biddings</a></li>
                         </ul>
                     </li>

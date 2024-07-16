@@ -56,27 +56,25 @@
 </div> -->
 
 <div class="container py-3">
-  <h2>Active Listings</h2>
+  <h2 class="fs-1 my-2 text-center"><u>All Listing</u></h2>
   {% for auction in auctions %}
-  <div class="row">
-      <div class="col py-3 border light">
-          <a href="#">
-          <img src="{{ auction.image.url }}" alt="auction.image"> 
-          </a>
+      
+  <div class="card mb-3 container">
+    <div class="row ">
+      <div class="col-md-6">
+        <img src="{{ auction.image.url }}" class="img-fluid rounded-start" alt="auction.image">
       </div>
-      
-      <div class="col py-3 border light">
-          <h4><a href="{% url 'AuctionItem' auction.id %}" style="color: inherit;"><strong>{{ auction.title }}</strong></a></h4>
-          <div>Description:</div>
-          <div><p>{{ auction.description }}</p></div>
-          <h1>Category: <span>{{ auction.category }}</span></h1>
-          <div><strong style="font-size: 25px">Asking price:</strong></div>
-          <div><strong style="font-size: 25px"><p>US $ {{ auction.starting_bid }}</p></strong></div>
-          <div>Created on:</div>
-          <div><p>{{ auction.creation_date }}</p></div>
-      </div>    
+      <div class="col-md-6">
+        <div class="card-body">
+          <h5 class="card-title fs-1"><a href="{% url 'dashboard:AuctionItem' auction.id %}" style="color: inherit;"><strong>{{ auction.title }}</strong></a></h5>
+          <p class="card-text "> <span class="fw-semibold">Description: </span>{{ auction.description }}</p>
+          <p class="card-text "><span class="fw-semibold">Category: </span>{{ auction.category }}</p>
+          <h3><span><strong style="font-size: 25px">Asking price:</strong></span><strong style="font-size: 20px"><p>BDT {{ auction.starting_bid }}</p></strong></h3>
+          <p><small>Created on: {{ auction.creation_date }}</small></p>
+        </div>
+      </div>
+    </div>
   </div>
-      
   {% endfor %}
 </div>
 {% endblock %}

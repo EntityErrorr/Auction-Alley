@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
+from django.utils import timezone
 
 from .models import User, Auction, Bid, Category, Comment, Watchlist
 from .forms import NewCommentForm, NewBidForm
@@ -33,81 +34,37 @@ def AuctionItem(request, auction_id):
 
     # get the highest bids of the aunction
     highest_bid = Bid.objects.filter(auction=auction_id).order_by("-bid_price").first()
-    
-    # check the request method is POST
+
     if request.method == "GET":
-        form = NewBidForm()
         commentForm = NewCommentForm()
         return render(request, "AuctionItem.html", {
             "auction": auction,
-            # "form": form,
             "user": user,
             "bid_Num": bid_Num,
             "commentForm": commentForm,
             "comments": comments,
-            "watching": watching
-            }) 
+            "watching": watching }) 
 
-        # # check if the auction AuctionItem is not closed
-        # if not auction.closed:
-        #     return render(request, "auctions/AuctionItem.html", {
-        #     "auction": auction,
-        #     "form": form,
-        #     "user": user,
-        #     "bid_Num": bid_Num,
-        #     "commentForm": commentForm,
-        #     "comments": comments,
-        #     "watching": watching
-        #     }) 
-
-        # # the auction is closed
-        # else:
-        #     # check the if there is bid for the auction AuctionItem
-        #     if highest_bid is None:
-        #         messages.info(request, 'The bid is closed and no bidder.')
-
-        #         return render(request, "auctions/listing.html", {
-        #             "auction": auction,
-        #             "form": form,
-        #             "user": user,
-        #             "bid_Num": bid_Num,
-        #             "highest_bidder": highest_bidder,
-        #             "commentForm": commentForm,
-        #             "comments": comments,
-        #             "watching": watching
-        #         })
-
-        #     else:
-        #         # assign the highest_bidder
-        #         highest_bidder = highest_bid.bider
-
-        #         # check the request user if the bid winner    
-        #         if user == highest_bidder:
-        #             messages.info(request, 'Congratulation. You won the bid.')
-        #         else:
-        #             messages.info(request, f'The winner of the bid is {highest_bidder.username}')
-
-        #         return render(request, "auctions/listing.html", {
-        #         "auction": auction,
-        #         "form": form,
-        #         "user": user,
-        #         "highest_bidder": highest_bidder,
-        #         "bid_Num": bid_Num,
-        #         "commentForm": commentForm,
-        #         "comments": comments,
-        #         "watching": watching
-        #         })
-
-    
-    # listing itself does not support POST method
-    else:
-        return render(request, "AuctionItem.html", {
-            "auction": auction,
-            # "form": form,
-            "user": user,
-            "bid_Num": bid_Num,
-            "commentForm": commentForm,
-            "comments": comments,
-            "watching": watching
-            }) 
         
+@login_required
+def comment(request, auction_id):
+    auction = Auction.objects.get(pk=auction_id) 
+    if request.method == "POST":
+        form = NewCommentForm(request.POST, request.FILES)
+        if form.is_valid():
+            new_comment = form.save(commit=False)
+            new_comment.user = request.user
+            new_comment.auction = auction
+            new_comment.save()
+            return HttpResponseRedirect(reverse("dashboard:AuctionItem", args=(auction.id,)))
+    else:
+        form = NewCommentForm()
+        return render(request, "AuctionItem.html", {'form':form})
+
+def LiveAuction(request):
+    live_auctions = Auction.objects.filter(
+        approval_status='approved',
+        end_time__gt=timezone.now()
+    ).order_by('-creation_date')
+    print(live_auctions)
+    return render(request, "home.html", {"auctions": live_auctions})
