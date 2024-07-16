@@ -1,11 +1,11 @@
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render, redirect
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect,JsonResponse
 from django.urls import reverse
 from django.utils import timezone
 
 from .models import User, Auction, Bid, Category, Comment, Watchlist
-from .forms import NewCommentForm, NewBidForm
+from .forms import NewCommentForm,BidForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
@@ -68,3 +68,59 @@ def LiveAuction(request):
     ).order_by('-creation_date')
     print(live_auctions)
     return render(request, "home.html", {"auctions": live_auctions})
+
+@login_required
+def bitplacement(request, auction_id):
+    auction = get_object_or_404(Auction, id=auction_id)
+    
+    if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        form = BidForm(request.POST)
+        if form.is_valid():
+            bid_price = form.cleaned_data['bid_price']
+            if bid_price > auction.current_bid:
+                try:
+                    # Create and save the new bid
+                    new_bid = Bid(
+                        bider=request.user,
+                        bid_date=timezone.now(),
+                        bid_price=bid_price,
+                        auction=auction
+                    )
+                    new_bid.save()
+
+                    # Update the current bid of the auction
+                    auction.current_bid = bid_price
+                    auction.save()
+
+                    return JsonResponse({
+                        'success': True,
+                        'current_bid': bid_price,
+                        'message': 'Your bid has been placed successfully!'
+                    })
+                except Exception as e:
+                    return JsonResponse({
+                        'success': False,
+                        'message': f'Error: {str(e)}'
+                    })
+            else:
+                return JsonResponse({
+                    'success': False,
+                    'message': 'Your bid must be higher than the current bid.'
+                })
+        else:
+            return JsonResponse({
+                'success': False,
+                'message': 'Invalid bid form.',
+                'errors': form.errors.as_json()  # Add form errors to the response
+            })
+
+    # Render the auction detail page
+    bid_form = BidForm()
+    context = {
+        'auction': auction,
+        'bid_form': bid_form,
+    }
+    return render(request, 'bitplacement.html', context)
+
+
+

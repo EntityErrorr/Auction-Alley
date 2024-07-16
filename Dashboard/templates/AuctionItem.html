@@ -28,8 +28,8 @@
                     <p><small>Created on: {{ auction.creation_date }}</small></p>
                     <p><small>Updated on: {{ auction.update_date }}</small></p>
                     <span class="form-text text-muted">{{ bid_Num }} Bid(s) so far.</span> <br>
-
-                    <a href="#" class="btn btn-primary btn-lg my-3"> Place Bid</a>
+                    
+                    <a href="{% url 'dashboard:bitplacement' auction.id %}" class="btn btn-primary btn-lg my-3"> Place Bid</a>
 
                             {% if not auction.closed  %}
                         <div class="container" id="button_group">
