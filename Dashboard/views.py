@@ -69,6 +69,126 @@ def LiveAuction(request):
     print(live_auctions)
     return render(request, "home.html", {"auctions": live_auctions})
 
+# @login_required
+# def bitplacement(request, auction_id):
+#     auction = get_object_or_404(Auction, id=auction_id)
+    
+#     if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+#         form = BidForm(request.POST)
+#         if form.is_valid():
+#             bid_price = form.cleaned_data['bid_price']
+#             if bid_price > auction.current_bid:
+#                 try:
+#                     # Create and save the new bid
+#                     new_bid = Bid(
+#                         bider=request.user,
+#                         bid_date=timezone.now(),
+#                         bid_price=bid_price,
+#                         auction=auction
+#                     )
+#                     new_bid.save()
+
+#                     # Update the current bid of the auction
+#                     auction.current_bid = bid_price
+#                     auction.save()
+
+#                     return JsonResponse({
+#                         'success': True,
+#                         'current_bid': bid_price,
+#                         'message': 'Your bid has been placed successfully!'
+#                     })
+#                 except Exception as e:
+#                     return JsonResponse({
+#                         'success': False,
+#                         'message': f'Error: {str(e)}'
+#                     })
+#             else:
+#                 return JsonResponse({
+#                     'success': False,
+#                     'message': 'Your bid must be higher than the current bid.'
+#                 })
+#         else:
+#             return JsonResponse({
+#                 'success': False,
+#                 'message': 'Invalid bid form.',
+#                 'errors': form.errors.as_json()  # Add form errors to the response
+#             })
+
+#     # Render the auction detail page
+#     bid_form = BidForm()
+#     context = {
+#         'auction': auction,
+#         'bid_form': bid_form,
+#     }
+#     return render(request, 'bitplacement.html', context)
+from django.shortcuts import get_object_or_404, render, redirect
+from django.http import JsonResponse
+from django.utils import timezone
+from django.contrib.auth.decorators import login_required
+from .models import Auction, Bid
+from .forms import BidForm
+
+from django.shortcuts import get_object_or_404, render, redirect
+from django.http import JsonResponse
+from django.utils import timezone
+from django.contrib.auth.decorators import login_required
+from .models import Auction, Bid
+from .forms import BidForm
+
+# @login_required
+# def bitplacement(request, auction_id):
+#     auction = get_object_or_404(Auction, id=auction_id)
+    
+#     if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+#         form = BidForm(request.POST)
+#         if form.is_valid():
+#             bid_price = form.cleaned_data['bid_price']
+#             if bid_price > auction.current_bid:
+#                 try:
+#                     # Create and save the new bid
+#                     new_bid = Bid(
+#                         bider=request.user,
+#                         bid_date=timezone.now(),
+#                         bid_price=bid_price,
+#                         auction=auction
+#                     )
+#                     new_bid.save()
+
+#                     # Update the current bid of the auction
+#                     auction.current_bid = bid_price
+#                     auction.save()
+
+#                     return JsonResponse({
+#                         'success': True,
+#                         'current_bid': f'${bid_price:.2f}',
+#                         'message': 'Your bid has been placed successfully!'
+#                     })
+#                 except Exception as e:
+#                     return JsonResponse({
+#                         'success': False,
+#                         'message': f'Error: {str(e)}'
+#                     })
+#             else:
+#                 return JsonResponse({
+#                     'success': False,
+#                     'message': 'Your bid must be higher than the current bid and the starting bid.'
+#                 })
+#         else:
+#             return JsonResponse({
+#                 'success': False,
+#                 'message': 'Invalid bid form.',
+#                 'errors': form.errors.as_json()  # Add form errors to the response
+#             })
+
+#     # Render the auction detail page
+#     bid_form = BidForm()
+#     context = {
+#         'auction': auction,
+#         'bid_form': bid_form,
+#     }
+#     return render(request, 'bitplacement.html', context)
+
+
 @login_required
 def bitplacement(request, auction_id):
     auction = get_object_or_404(Auction, id=auction_id)
@@ -77,7 +197,9 @@ def bitplacement(request, auction_id):
         form = BidForm(request.POST)
         if form.is_valid():
             bid_price = form.cleaned_data['bid_price']
-            if bid_price > auction.current_bid:
+            starting_bid = auction.starting_bid  # Get the starting bid from the auction
+            
+            if bid_price > starting_bid:
                 try:
                     # Create and save the new bid
                     new_bid = Bid(
@@ -94,8 +216,11 @@ def bitplacement(request, auction_id):
 
                     return JsonResponse({
                         'success': True,
-                        'current_bid': bid_price,
-                        'message': 'Your bid has been placed successfully!'
+                        'current_bid': f'${bid_price:.2f}',
+                        'message': 'Your bid has been placed successfully!',
+                        'bider': request.user.username,
+                        'bid_price': f'${bid_price:.2f}',
+                        'bid_date': timezone.now().strftime('%Y-%m-%d %H:%M:%S')
                     })
                 except Exception as e:
                     return JsonResponse({
@@ -105,22 +230,22 @@ def bitplacement(request, auction_id):
             else:
                 return JsonResponse({
                     'success': False,
-                    'message': 'Your bid must be higher than the current bid.'
+                    'message': 'Your bid must be higher than the starting bid.'
                 })
         else:
             return JsonResponse({
                 'success': False,
-                'message': 'Invalid bid form.',
-                'errors': form.errors.as_json()  # Add form errors to the response
+                'message': 'Invalid bid form.'
             })
+
+    # Fetch the bids for the auction
+    bids = Bid.objects.filter(auction=auction).order_by('-bid_date')
 
     # Render the auction detail page
     bid_form = BidForm()
     context = {
         'auction': auction,
+        'bids': bids,
         'bid_form': bid_form,
     }
     return render(request, 'bitplacement.html', context)
-
-
-

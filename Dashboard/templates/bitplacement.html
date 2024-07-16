@@ -2,21 +2,30 @@
 
 {% block content %}
 <style>
-    /* Your custom styles here */
-    body {
+    .nihal {
         font-family: Arial, sans-serif;
         background-color: #f2f2f2;
         margin: 20px;
+        background-image: url('https://thumbs.dreamstime.com/b/auction-house-bidding-concept-man-auctioneer-gavel-sales-art-gallery-landscape-painting-lot-professional-business-134043872.jpg');
+        background-size: cover;
+        background-position: center;
     }
     .container {
         max-width: 1000px;
         margin: auto;
-        background: #ffffff;
+        background: rgba(255, 255, 255, 0.8); /* Adjust opacity as needed */
         padding: 20px;
         border-radius: 8px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .content {
+        display: flex;
         flex-direction: row;
+        width: 100%;
+        justify-content: space-between;
     }
     .left-column {
         flex: 1;
@@ -73,74 +82,128 @@
         text-align: center;
         margin-top: 20px;
         font-size: 18px;
-        color: #ff0000;
         font-weight: bold;
         display: none; /* Initially hidden */
     }
+    .bids-list {
+        margin-top: 20px;
+        width: 100%;
+    }
+    .bids-list ul {
+        list-style-type: none;
+        padding: 0;
+    }
+    .bids-list li {
+        background-color: #f9f9f9;
+        margin-bottom: 10px;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
 </style>
-<div class="container">
-    <div class="left-column">
-        <div class="time-left">
-            Time left: {{ auction.end_time|timesince }} remaining
-        </div>
-        <div class="auction-image">
-            <img src="{{ auction.image.url }}" alt="House Image">
-        </div>
-    </div>
-    <div class="right-column">
-        <h1>{{ auction.title }}</h1>
-        <div>
-            <p><strong>Description:</strong> {{ auction.description }}</p>
-            <p><strong>Address:</strong> {{ auction.address }}</p>
-            <p><strong>Starting Bid:</strong> ${{ auction.starting_bid }}</p>
-            <p><strong>Current Bid:</strong> $<span id="current-bid">{{ auction.current_bid }}</span></p>
-            <p><strong>Seller:</strong> {{ auction.seller.username }}</p>
-            <p><strong>Category:</strong> {{ auction.category.title }}</p>
-        </div>
 
-        <h2>Place a Bid</h2>
-        <form id="bid-form" method="post" action="{% url 'dashboard:bitplacement' auction.id %}">
-            {% csrf_token %}
-            {{ bid_form.as_p }}
-            <button type="submit">Place Bid</button>
-        </form>
+<div class="nihal m-0 p-0" style="width: 100%;">
+    <div class="container">
+        <div class="content">
+            <div class="left-column">
+                <div class="time-left">
+                    Time left: {{ auction.end_time|timesince }} remaining
+                </div>
+                <div class="auction-image">
+                    <img src="{{ auction.image.url }}" alt="House Image">
+                </div>
+            </div>
+            <div class="right-column">
+                <h1>{{ auction.title }}</h1>
+                <div>
+                    <p><strong>Description:</strong> {{ auction.description }}</p>
+                    <p><strong>Address:</strong> {{ auction.address }}</p>
+                    <p><strong>Starting Bid:</strong> ${{ auction.starting_bid }}</p>
+                    <p><strong>Current Bid:</strong> $<span id="current-bid">{{ auction.current_bid }}</span></p>
+                    <p><strong>Seller:</strong> {{ auction.seller.username }}</p>
+                    <p><strong>Category:</strong> {{ auction.category.title }}</p>
+                </div>
+    
+                <h2><b>Place a Bid</b></h2>
+                <form id="bid-form" method="post" action="{% url 'dashboard:bitplacement' auction.id %}">
+                    {% csrf_token %}
+                    {{ bid_form.as_p }}
+                    <button type="submit">Place Bid</button>
+                </form>
+                
+                <div class="notification" id="notification"></div>
+            </div>
+        </div>
         
-        <div class="notification" id="notification"></div>
+        <div class="bids-list">
+            <h2 class="recent-bids"><b>Recent Bids</b></h2>
+            <ul>
+                {% for bid in bids %}
+                    <li>
+                        <p><strong>{{ bid.bider.username }}</strong> placed a bid of ${{ bid.bid_price }} on {{ bid.bid_date }}</p>
+                    </li>
+                {% empty %}
+                    <li>No bids yet.</li>
+                {% endfor %}
+            </ul>
+        </div>
     </div>
 </div>
 
 <script>
     document.getElementById('bid-form').addEventListener('submit', function(event) {
-        event.preventDefault();
-        var form = this;
-        var formData = new FormData(form);
-        var xhr = new XMLHttpRequest();
-        xhr.open('POST', form.action, true);
-        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-        xhr.setRequestHeader('X-CSRFToken', '{{ csrf_token }}');
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState === XMLHttpRequest.DONE) {
-                if (xhr.status === 200) {
-                    var response = JSON.parse(xhr.responseText);
+    event.preventDefault();
+    var form = this;
+    var bidPrice = parseFloat(form.elements['bid_price'].value);
+    var currentBid = parseFloat(document.getElementById('current-bid').innerText);
+    var startingBid = parseFloat("{{ auction.starting_bid }}");
+
+    if (bidPrice <= startingBid) {
+        var notification = document.getElementById('notification');
+        notification.innerText = 'Your bid must be higher than the starting bid.';
+        notification.style.display = 'block';
+        notification.style.color = 'red';
+        return;
+    }
+
+    var formData = new FormData(form);
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', form.action, true);
+    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            if (xhr.status === 200) {
+                var response = JSON.parse(xhr.responseText);
+                if (response.success) {
                     document.getElementById('current-bid').innerText = response.current_bid;
                     var notification = document.getElementById('notification');
                     notification.innerText = response.message;
                     notification.style.display = 'block';
-                    if (response.success) {
-                        notification.style.color = 'green';
-                    } else {
-                        notification.style.color = 'red';
-                    }
+                    notification.style.color = 'green';
+                    
+                    // Optionally, add the new bid to the recent bids list
+                    var bidsList = document.querySelector('.bids-list ul');
+                    var newBidItem = document.createElement('li');
+                    newBidItem.innerHTML = '<p><strong>' + response.bider + '</strong> placed a bid of ' + response.bid_price + ' on ' + response.bid_date + '</p>';
+                    bidsList.insertBefore(newBidItem, bidsList.firstChild);
                 } else {
                     var notification = document.getElementById('notification');
-                    notification.innerText = 'An error occurred. Please try again.';
+                    notification.innerText = response.message;
                     notification.style.display = 'block';
                     notification.style.color = 'red';
                 }
+            } else {
+                var notification = document.getElementById('notification');
+                notification.innerText = 'An error occurred. Please try again.';
+                notification.style.display = 'block';
+                notification.style.color = 'red';
             }
-        };
-        xhr.send(formData);
-    });
+        }
+    };
+    xhr.send(formData);
+});
+
+
 </script>
 
 {% endblock %}
