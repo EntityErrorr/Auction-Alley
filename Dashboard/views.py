@@ -10,40 +10,42 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
 
-# Create your views here.
-def AuctionItem(request, auction_id):  
-    # get the auction AuctionItem by id
-    auction = Auction.objects.get(pk=auction_id)
-    # set watching flag be False as default
-    watching = False
-    # set the highest bidder is None as default    
-    highest_bidder = None
+# views.py
+from django.utils import timezone
+from django.shortcuts import get_object_or_404, render
+from .models import Auction, Bid, Comment, Watchlist
+from .forms import NewCommentForm
 
-    # check if the auction in the watchlist
+def AuctionItem(request, auction_id):
+    auction = get_object_or_404(Auction, pk=auction_id)
+    now = timezone.now()
+    time_left = auction.end_time - now
+    seconds_left = time_left.total_seconds()
+
+    # Ensure the auction is still active
+    if seconds_left < 0:
+        seconds_left = 0
+
+    # Other existing code for getting bids, comments, etc.
+    bid_Num = Bid.objects.filter(auction=auction_id).count()
+    comments = Comment.objects.filter(auction=auction_id).order_by("-cm_date")
+    highest_bid = Bid.objects.filter(auction=auction_id).order_by("-bid_price").first()
+    watching = False
     if request.user.is_authenticated and Watchlist.objects.filter(user=request.user, auctions=auction):
         watching = True
-    
-    # get the page request user
-    user = request.user
-
-    # get the number of bids
-    bid_Num = Bid.objects.filter(auction=auction_id).count()
-
-    # get all comments of the auction
-    comments = Comment.objects.filter(auction=auction_id).order_by("-cm_date")
-
-    # get the highest bids of the aunction
-    highest_bid = Bid.objects.filter(auction=auction_id).order_by("-bid_price").first()
 
     if request.method == "GET":
         commentForm = NewCommentForm()
         return render(request, "AuctionItem.html", {
             "auction": auction,
-            "user": user,
+            "user": request.user,
             "bid_Num": bid_Num,
             "commentForm": commentForm,
             "comments": comments,
-            "watching": watching }) 
+            "watching": watching,
+            "seconds_left": seconds_left,
+        })
+
 
         
 @login_required

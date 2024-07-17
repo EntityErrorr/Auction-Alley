@@ -9,39 +9,13 @@ class Category(models.Model):
         return f"{self.title}"
 
 # define the model of a auction list
-# class Auction(models.Model):
-#     title = models.CharField(max_length=64)
-#     description = models.TextField(max_length=512)
-#     address = models.CharField(max_length=255)
-#     starting_bid = models.IntegerField()
-#     current_bid = models.IntegerField(default=0)
-#     current_bid_by = models.ForeignKey(User, on_delete=models.CASCADE,null=True, blank=True, related_name='bids_made')
-#     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="auction_category", blank=True, null=True) 
-#     seller = models.ForeignKey(User, on_delete=models.CASCADE, related_name="auction_seller")
-#     creation_date = models.DateTimeField(auto_now_add=True)
-#     end_time = models.DateTimeField(blank=True, null=True)
-#     image = models.ImageField(upload_to='auction_item_images/', blank=True, null=True)
-
-#     APPROVAL_CHOICES = [
-#         ('pending', 'Pending'),
-#         ('approved', 'Approved'),
-#         ('rejected', 'Rejected'),
-#     ]
-#     approval_status = models.CharField(max_length=10, choices=APPROVAL_CHOICES, default='pending')
-
-#     def __str__(self):
-#         return f"Auction id: {self.id} | Title: {self.title} | Seller: {self.seller} | Status: {self.approval_status}"
-    
-#     def get_fields(self):
-#         return [(field.name, getattr(self, field.name)) for field in Auction._meta.fields]
-
 class Auction(models.Model):
     title = models.CharField(max_length=64)
     description = models.TextField(max_length=512)
     address = models.CharField(max_length=255)
-    starting_bid = models.IntegerField(help_text="Starting bid amount in BDT")
-    current_bid = models.IntegerField(default=0, help_text="Current bid amount in BDT")
-    current_bid_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='bids_made')
+    starting_bid = models.IntegerField()
+    current_bid = models.IntegerField(default=0)
+    current_bid_by = models.ForeignKey(User, on_delete=models.CASCADE,null=True, blank=True, related_name='bids_made')
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="auction_category", blank=True, null=True) 
     seller = models.ForeignKey(User, on_delete=models.CASCADE, related_name="auction_seller")
     creation_date = models.DateTimeField(auto_now_add=True)

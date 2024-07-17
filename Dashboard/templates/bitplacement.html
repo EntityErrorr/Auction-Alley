@@ -107,7 +107,7 @@
         <div class="content">
             <div class="left-column">
                 <div class="time-left">
-                    Time left: {{ auction.end_time|timesince }} remaining
+                    Time left: <span id="countdown"></span>
                 </div>
                 <div class="auction-image">
                     <img src="{{ auction.image.url }}" alt="House Image">
@@ -151,59 +151,78 @@
 </div>
 
 <script>
+    // Countdown Timer
+    var endDateTime = new Date("{{ auction.end_time|date:'Y-m-d\\TH:i:s' }}").getTime();
+
+    var x = setInterval(function() {
+        var now = new Date().getTime();
+        var distance = endDateTime - now;
+
+        var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        document.getElementById("countdown").innerHTML = "Time Left: " + days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
+
+        if (distance < 0) {
+            clearInterval(x);
+            document.getElementById("countdown").innerHTML = "Auction has Ended!";
+        }
+    }, 1000);
+
+    // Bid Form Submission
     document.getElementById('bid-form').addEventListener('submit', function(event) {
-    event.preventDefault();
-    var form = this;
-    var bidPrice = parseFloat(form.elements['bid_price'].value);
-    var currentBid = parseFloat(document.getElementById('current-bid').innerText);
-    var startingBid = parseFloat("{{ auction.starting_bid }}");
+        event.preventDefault();
+        var form = this;
+        var bidPrice = parseFloat(form.elements['bid_price'].value);
+        var currentBid = parseFloat(document.getElementById('current-bid').innerText);
+        var startingBid = parseFloat("{{ auction.starting_bid }}");
 
-    if (bidPrice <= startingBid) {
-        var notification = document.getElementById('notification');
-        notification.innerText = 'Your bid must be higher than the starting bid.';
-        notification.style.display = 'block';
-        notification.style.color = 'red';
-        return;
-    }
+        if (bidPrice <= startingBid) {
+            var notification = document.getElementById('notification');
+            notification.innerText = 'Your bid must be higher than the starting bid.';
+            notification.style.display = 'block';
+            notification.style.color = 'red';
+            return;
+        }
 
-    var formData = new FormData(form);
-    var xhr = new XMLHttpRequest();
-    xhr.open('POST', form.action, true);
-    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState === XMLHttpRequest.DONE) {
-            if (xhr.status === 200) {
-                var response = JSON.parse(xhr.responseText);
-                if (response.success) {
-                    document.getElementById('current-bid').innerText = response.current_bid;
-                    var notification = document.getElementById('notification');
-                    notification.innerText = response.message;
-                    notification.style.display = 'block';
-                    notification.style.color = 'green';
-                    
-                    // Optionally, add the new bid to the recent bids list
-                    var bidsList = document.querySelector('.bids-list ul');
-                    var newBidItem = document.createElement('li');
-                    newBidItem.innerHTML = '<p><strong>' + response.bider + '</strong> placed a bid of ' + response.bid_price + ' on ' + response.bid_date + '</p>';
-                    bidsList.insertBefore(newBidItem, bidsList.firstChild);
+        var formData = new FormData(form);
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', form.action, true);
+        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 200) {
+                    var response = JSON.parse(xhr.responseText);
+                    if (response.success) {
+                        document.getElementById('current-bid').innerText = response.current_bid;
+                        var notification = document.getElementById('notification');
+                        notification.innerText = response.message;
+                        notification.style.display = 'block';
+                        notification.style.color = 'green';
+                        
+                        // Optionally, add the new bid to the recent bids list
+                        var bidsList = document.querySelector('.bids-list ul');
+                        var newBidItem = document.createElement('li');
+                        newBidItem.innerHTML = '<p><strong>' + response.bider + '</strong> placed a bid of ' + response.bid_price + ' on ' + response.bid_date + '</p>';
+                        bidsList.insertBefore(newBidItem, bidsList.firstChild);
+                    } else {
+                        var notification = document.getElementById('notification');
+                        notification.innerText = response.message;
+                        notification.style.display = 'block';
+                        notification.style.color = 'red';
+                    }
                 } else {
                     var notification = document.getElementById('notification');
-                    notification.innerText = response.message;
+                    notification.innerText = 'An error occurred. Please try again.';
                     notification.style.display = 'block';
                     notification.style.color = 'red';
                 }
-            } else {
-                var notification = document.getElementById('notification');
-                notification.innerText = 'An error occurred. Please try again.';
-                notification.style.display = 'block';
-                notification.style.color = 'red';
             }
-        }
-    };
-    xhr.send(formData);
-});
-
-
+        };
+        xhr.send(formData);
+    });
 </script>
 
 {% endblock %}
