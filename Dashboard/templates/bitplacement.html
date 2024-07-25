@@ -102,6 +102,7 @@
     }
 </style>
 
+
 <div class="nihal m-0 p-0" style="width: 100%;">
     <div class="container">
         <div class="content">
@@ -137,20 +138,28 @@
         
         <div class="bids-list">
             <h2 class="recent-bids"><b>Recent Bids</b></h2>
-            <ul>
+            <ul id="bids-list">
                 {% for bid in bids %}
                     <li>
-                        <p><strong>{{ bid.bider.username }}</strong> placed a bid of ${{ bid.bid_price }} on {{ bid.bid_date }}</p>
+                        <p><strong>{{ bid.bider.username }}</strong> placed a bid of ${{ bid.bid_price }} on {{ bid.bid_date|date:"F j, Y, g:i a" }}</p>
                     </li>
                 {% empty %}
                     <li>No bids yet.</li>
                 {% endfor %}
             </ul>
+            {% if has_next %}
+                <button id="load-more" data-offset="5" data-limit="5" data-has-next="true">Show More</button>
+            {% else %}
+                <button id="load-more" style="display:none;" data-offset="5" data-limit="5" data-has-next="false">Show More</button>
+            {% endif %}
         </div>
     </div>
 </div>
 
 <script>
+    // Set the URL for loading bids
+    var loadBidsUrl = "{% url 'dashboard:load_bids' auction.id %}";
+
     // Countdown Timer
     var endDateTime = new Date("{{ auction.end_time|date:'Y-m-d\\TH:i:s' }}").getTime();
 
@@ -163,7 +172,7 @@
         var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
         var seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-        document.getElementById("countdown").innerHTML = "Time Left: " + days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
+        document.getElementById("countdown").innerHTML = days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
 
         if (distance < 0) {
             clearInterval(x);
@@ -203,9 +212,9 @@
                         notification.style.color = 'green';
                         
                         // Optionally, add the new bid to the recent bids list
-                        var bidsList = document.querySelector('.bids-list ul');
+                        var bidsList = document.getElementById('bids-list');
                         var newBidItem = document.createElement('li');
-                        newBidItem.innerHTML = '<p><strong>' + response.bider + '</strong> placed a bid of ' + response.bid_price + ' on ' + response.bid_date + '</p>';
+                        newBidItem.innerHTML = '<p><strong>' + response.bider + '</strong> placed a bid of $' + response.bid_price + ' on ' + formatDate(response.bid_date) + '</p>';
                         bidsList.insertBefore(newBidItem, bidsList.firstChild);
                     } else {
                         var notification = document.getElementById('notification');
@@ -223,6 +232,45 @@
         };
         xhr.send(formData);
     });
-</script>
 
+    // Load More Bids
+    document.getElementById('load-more').addEventListener('click', function() {
+        var button = this;
+        var offset = parseInt(button.getAttribute('data-offset'));
+        var limit = parseInt(button.getAttribute('data-limit'));
+        var hasNext = button.getAttribute('data-has-next') === 'true';
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', loadBidsUrl + '?offset=' + offset + '&limit=' + limit, true);
+        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 200) {
+                    var response = JSON.parse(xhr.responseText);
+                    if (response.bids.length > 0) {
+                        var bidsList = document.getElementById('bids-list');
+                        response.bids.forEach(function(bid) {
+                            var bidItem = document.createElement('li');
+                            bidItem.innerHTML = '<p><strong>' + bid.bider + '</strong> placed a bid of $' + bid.bid_price + ' on ' + formatDate(bid.bid_date) + '</p>';
+                            bidsList.appendChild(bidItem);
+                        });
+                        button.setAttribute('data-offset', offset + limit);
+                        button.setAttribute('data-has-next', response.has_next);
+                    } else {
+                        button.style.display = 'none';
+                    }
+                } else {
+                    console.error('Failed to load bids.');
+                }
+            }
+        };
+        xhr.send();
+    });
+
+    function formatDate(dateStr) {
+        var options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true };
+        return new Date(dateStr).toLocaleDateString('en-US', options).replace(',', ' at');
+    }
+</script>
 {% endblock %}
+
