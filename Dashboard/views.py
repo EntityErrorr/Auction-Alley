@@ -836,3 +836,24 @@ def load_bids(request, auction_id):
         'bids': bid_data,
         'has_next': has_next
     })
+
+
+from django.shortcuts import render
+from .models import Auction
+
+def search_auctions(request):
+    query = request.GET.get('search', '')
+    auctions = Auction.objects.all()
+    
+    if query:
+        auctions = auctions.filter(
+            Q(title__icontains=query) |
+            Q(description__icontains=query) |
+            Q(category__icontains=query) |
+            Q(starting_bid__icontains=query)
+        )
+
+    context = {
+        'auctions': auctions
+    }
+    return render(request, 'dashboard/home.html', context)

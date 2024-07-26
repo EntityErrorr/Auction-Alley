@@ -1,6 +1,3 @@
-{% extends 'basee.html' %}
-
-{% block content %}
 
 <!-- <div class="container mt-5">
   <div class="row justify-content-center">
@@ -55,21 +52,42 @@
   </div>
 </div> -->
 
+{% extends 'basee.html' %}
+
+{% block content %}
+
 <div class="container py-3">
-  <h2 class="fs-1 my-2 text-center"><u>All Listing</u></h2>
+  <!-- Unified Search Form -->
+  <form action="{% url 'dashboard:search_auctions' %}" method="GET" class="my-4 d-flex justify-content-center">
+    <input type="text" name="search" class="form-control mx-2" placeholder="Search by name, bid price or category...">
+    <button type="submit" class="btn btn-primary mx-2">Search</button>
+  </form>
+  
   {% for auction in auctions %}
-      
   <div class="card mb-3 container">
-    <div class="row ">
+    <div class="row">
       <div class="col-md-6">
         <img src="{{ auction.image.url }}" class="img-fluid rounded-start" alt="auction.image">
       </div>
       <div class="col-md-6">
         <div class="card-body">
-          <h5 class="card-title fs-1"><a href="{% url 'dashboard:AuctionItem' auction.id %}" style="color: inherit;"><strong>{{ auction.title }}</strong></a></h5>
-          <p class="card-text "> <span class="fw-semibold">Description: </span>{{ auction.description }}</p>
-          <p class="card-text "><span class="fw-semibold">Category: </span>{{ auction.category }}</p>
-          <h3><span><strong style="font-size: 25px">Asking price:</strong></span><strong style="font-size: 20px"><p>BDT {{ auction.starting_bid }}</p></strong></h3>
+          <h5 class="card-title fs-1">
+            <a href="{% url 'dashboard:AuctionItem' auction.id %}" style="color: inherit;">
+              <strong>{{ auction.title }}</strong>
+            </a>
+          </h5>
+          <p class="card-text">
+            <span class="fw-semibold">Description: </span>{{ auction.description }}
+          </p>
+          <p class="card-text">
+            <span class="fw-semibold">Category: </span>{{ auction.category }}
+          </p>
+          <h3>
+            <span><strong style="font-size: 25px">Asking price:</strong></span>
+            <strong style="font-size: 20px">
+              <p>BDT {{ auction.starting_bid }}</p>
+            </strong>
+          </h3>
           <p><small>Created on: {{ auction.creation_date }}</small></p>
         </div>
       </div>
@@ -77,4 +95,12 @@
   </div>
   {% endfor %}
 </div>
+
 {% endblock %}
+
+
+<!-- css style for search_auctions -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>

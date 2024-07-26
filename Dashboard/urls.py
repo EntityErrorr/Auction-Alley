@@ -8,6 +8,7 @@ urlpatterns = [
     path("Live_Auction/", views.LiveAuction, name="LiveAuction"),
     path("AuctionItem/<int:auction_id>/bid_placement", views.bitplacement, name="bitplacement"),
     path('AuctionItem/<int:auction_id>/load_bids/', views.load_bids, name='load_bids'),
+    path('search/', views.search_auctions, name='search_auctions'),
 ]
     # path('', views.index, name='index'),
 
