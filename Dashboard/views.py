@@ -743,6 +743,7 @@ def bitplacement(request, auction_id):
                         f'Bid Date: {new_bid.bid_date.strftime("%Y-%m-%d %H:%M:%S")}\n\n'
                         f'Thank you for using our auction platform.\n'
                     )
+                    
 
                     send_mail(
                         subject,
@@ -751,6 +752,8 @@ def bitplacement(request, auction_id):
                         [bidder_email],
                         fail_silently=False,
                     )
+
+                    print(f'Email sent successfully to {bidder_email}')
 
                 # Notify previous bidders
                 all_bids = Bid.objects.filter(auction=auction).exclude(bider=request.user).order_by('-bid_date')
@@ -777,6 +780,8 @@ def bitplacement(request, auction_id):
                                 [previous_bidder_email],
                                 fail_silently=False,
                             )
+
+                            print(f'Notification email sent to previous bidder {previous_bidder_email}')
 
                 return JsonResponse({
                     'success': True,
