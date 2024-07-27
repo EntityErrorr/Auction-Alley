@@ -102,7 +102,6 @@
     }
 </style>
 
-
 <div class="nihal m-0 p-0" style="width: 100%;">
     <div class="container">
         <div class="content">
@@ -185,7 +184,7 @@
         event.preventDefault();
         var form = this;
         var bidPrice = parseFloat(form.elements['bid_price'].value);
-        var currentBid = parseFloat(document.getElementById('current-bid').innerText);
+        var currentBid = parseFloat(document.getElementById('current-bid').innerText.replace('$', ''));
         var startingBid = parseFloat("{{ auction.starting_bid }}");
 
         if (bidPrice <= startingBid) {
@@ -196,7 +195,7 @@
             return;
         }
 
-        var formData = new FormData(form); 
+        var formData = new FormData(form);
         var xhr = new XMLHttpRequest();
         xhr.open('POST', form.action, true);
         xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
@@ -211,11 +210,10 @@
                         notification.style.display = 'block';
                         notification.style.color = 'green';
                         
-                        // Optionally, add the new bid to the recent bids list
-                        var bidsList = document.getElementById('bids-list');
-                        var newBidItem = document.createElement('li');
-                        newBidItem.innerHTML = '<p><strong>' + response.bider + '</strong> placed a bid of $' + response.bid_price + ' on ' + formatDate(response.bid_date) + '</p>';
-                        bidsList.insertBefore(newBidItem, bidsList.firstChild);
+                        // Refresh the page after 2 seconds
+                        setTimeout(function() {
+                            location.reload();
+                        }, 2000);
                     } else {
                         var notification = document.getElementById('notification');
                         notification.innerText = response.message;
@@ -273,4 +271,3 @@
     }
 </script>
 {% endblock %}
-
