@@ -1,0 +1,99 @@
+{% extends 'basee.html' %} 
+{% block content %}
+
+<style>
+  .advisor-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 20px auto;
+    background-color: white;
+    padding: 50px;
+    border: 2px solid black;
+    border-radius: 10px;
+  }
+  .advisor-container p {
+    color: black;
+    margin: 5px 0;
+  }
+
+  .advisor-slot-container {
+    margin: 50px auto;
+    width: 100%;
+    max-width: 1200px;
+    background-color: white;
+    padding: 10px;
+    border-radius: 10px;
+  }
+  .advisor-slot-container table {
+    width: 100%;
+  }
+  .advisor-slot-container table tr {
+    padding: 10px;
+    border: 1px solid black;
+  }
+  .advisor-slot-container table td,
+  .advisor-slot-container table th {
+    padding: 10px;
+    border: 1px solid black;
+  }
+  .advisor-slot-container table td button {
+    border: none;
+    padding: 6px 10px;
+    font-weight: 600;
+    font-size: 16px;
+    width: 60%;
+    background-color: greenyellow;
+  }
+</style>
+<div class="advisor-card advisor-container">
+    <h4 class="fw-semibold text-uppercase">Name - {{advisor.first_name}} {{advisor.last_name}}</h5>
+    <p>Advisor's email - {{advisor.email}}</p>
+</div>
+
+<div class="advisor-slot-container">
+  <table>
+    <tr>
+      <th>Day</th>
+      <th>Start</th>
+      <th>End</th>
+      <th>Remaining Spots</th>
+      <th>Book</th>
+      <th>Meet Link</th>
+    </tr>
+
+    {% for slot in slots %}
+    <tr>
+      <td>{{slot.day}}</td>
+      <td>{{slot.start_time}}</td>
+      <td>{{slot.end_time}}</td>
+      <td id="remaining-slots-{{ slot.id }}"></td>
+      
+      <td>
+        {% if request.user in slot.booked_user_list.all %}
+            <a class="btn btn-primary" href="{% url 'dashboard:bookSlot' slot.id %}">Unbook</a>
+        {% else %}
+            <a class="btn btn-primary" href="{% url 'dashboard:bookSlot' slot.id %}">Book This Slot</a>
+        {% endif %}
+      </td>
+      
+      <td>
+        {% if request.user in slot.booked_user_list.all%}
+            <a href="{{ slot.meet_link }}">{{ slot.meet_link }}</a>
+        {% else %} 
+            Not authorized 
+        {% endif %}
+      </td>
+      
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+
+<script type="text/javascript">
+  
+  {% for slot in slots %}
+  const remainingSlots{{ slot.id }} = {{ slot.max_user }} - {{ slot.total_user }};
+  document.getElementById("remaining-slots-{{ slot.id }}").innerText = remainingSlots{{ slot.id }};
+  {% endfor %}
+</script>
+{% endblock %}

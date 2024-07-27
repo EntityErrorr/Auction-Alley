@@ -64,3 +64,28 @@ class Watchlist(models.Model):
 
     def __str__(self):
         return f"{self.user}'s watchlist"
+    
+
+#define the model of advisor
+class Advisorslot(models.Model):
+    user=models.ForeignKey(User,on_delete=models.CASCADE, related_name='slot')
+    d_type = [
+        ('saturday', 'Saturday'),
+        ('sunday', 'Sunday'),
+        ('monday', 'Monday'),
+        ('tuesday', 'Tuesday'),
+        ('wednesday', 'Wednesday'),
+        ('thrusday', 'Thrusday'),
+        ('friday', 'Friday'),
+    ]
+    day =models.CharField(max_length=20, choices=d_type)
+    start_time= models.TimeField()
+    end_time=models.TimeField()
+    message=models.TextField(null=True,blank=True)
+    max_user=models.IntegerField(default=10)
+    total_user=models.IntegerField(default=0, blank=True, null=True)
+    meet_link=models.CharField(max_length=250,null=True,blank=True)
+    booked_user_list= models.ManyToManyField(User,blank=True,related_name='booked_User')
+
+    def __str__(self) :
+        return f"{self.user.username}'s {self.day}'s slot"

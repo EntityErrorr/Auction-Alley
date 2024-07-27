@@ -13,7 +13,7 @@ from datetime import datetime, timedelta
 # Create your views here.
 def home(request):
     return render(request, "home.html", {
-            "auctions": Auction.objects.filter(approval_status__in=['pending', 'approved']).order_by('-creation_date')
+            "auctions": Auction.objects.filter(approval_status__in=[ 'approved']).order_by('-creation_date')
         })
 
 def register(request):

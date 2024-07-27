@@ -1,0 +1,30 @@
+{% extends 'basee.html' %}
+
+{% block content %}
+  <div class="row row-cols-1 row-cols-md-3 g-4 container my-3 p-3">
+    {% for auction in pending%}
+    <div class="col">
+        <div class="card" style="width: 18rem;">
+            <img src="{{ auction.image.url }}" class="card-img-top" alt="...">
+            <div class="card-body">
+                <h5 class="card-title fs-4"><a href="{% url 'dashboard:AuctionItem' auction.id %}" ><strong>{{ auction.title }}</strong></a></h5>
+                <p class="card-text "> <span class="fw-semibold">Description: </span>{{ auction.description }}</p>
+                <p class="card-text mt-2"><span class="fw-semibold">Category: </span>{{ auction.category }}</p>
+            </div>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item">Location: </span>{{ auction.address }}</li>
+              <li class="list-group-item">Asking Price : {{ auction.starting_bid }} BDT</li>
+              <li class="list-group-item"><small>Created on: {{ auction.creation_date }}</small></li>
+            </ul>
+            <div class="card-body">
+                <form action="{% url 'dashboard:adminapprove' %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" name="action" value="approved|{{ auction.id }}" class="btn btn-primary" style="width: 120px">Approve</button>
+                    <button type="submit" name="action" value="rejected|{{ auction.id }}" class="btn btn-primary" style="width: 120px">Reject</button>
+                </form>
+            </div>
+          </div>
+    </div>
+    {%endfor%}
+  </div>
+{% endblock %}

@@ -60,11 +60,11 @@
                     {% if request.user.is_staff%}
                         {% if request.user.is_superuser %}
                             <li class="nav-item">
-                                <a class="nav-link" aria-current="page" href="">Admin Panel</a>
+                                <a class="nav-link" aria-current="page" href="{% url 'dashboard:adminapprove' %}">Admin Panel</a>
                             </li>
                         {% else %}
                             <li class="nav-item">
-                                <a class="nav-link" aria-current="page" href="">Manage Slot</a>
+                                <a class="nav-link" aria-current="page" href="{% url 'dashboard:manageslot' %}">Manage Slot</a>
                             </li>
                         {% endif %}
                     {% endif %}
@@ -93,7 +93,7 @@
                         </ul>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link " href="#">Financial Advice</a>
+                        <a class="nav-link " href="{% url 'dashboard:advisors' %}">Financial Advice</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link " href="#">Sell House</a>
