@@ -529,3 +529,8 @@ def create_auction(request):
         form = AuctionItemForm()
 
     return render(request, 'createauction.html', {'form': form})
+
+
+# def auction_map(request, auction_id):
+#     auction = get_object_or_404(Auction, id=auction_id)
+#     return render(request, 'auction_map.html', {'auction': auction})

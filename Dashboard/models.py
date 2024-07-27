@@ -22,6 +22,8 @@ class Auction(models.Model):
     end_time = models.DateTimeField(blank=True, null=True)
     house_size = models.IntegerField(null=True, blank=True)
     image = models.ImageField(upload_to='auction_item_images/')
+    # latitude = models.FloatField(null=True, blank=True)
+    # longitude = models.FloatField(null=True, blank=True)
 
     APPROVAL_CHOICES = [
         ('pending', 'Pending'),
@@ -35,6 +37,11 @@ class Auction(models.Model):
     
     def get_fields(self):
         return [(field.name, getattr(self, field.name)) for field in Auction._meta.fields]
+    
+    # def save(self, *args, **kwargs):
+    #     if not self.latitude or not self.longitude:
+    #         self.latitude, self.longitude = fetch_coordinates(self.address)
+    #     super().save(*args, **kwargs)
 
 # define the model of a bid
 class Bid(models.Model):
@@ -102,3 +109,14 @@ class RefundRequest(models.Model):
 
     def __str__(self):
         return self.reason  
+    
+# from django.db import models
+# from opencage.geocoder import OpenCageGeocode
+
+# def fetch_coordinates(address):
+#     key = '2139a598829e40faa98ee40396028537' 
+#     geocoder = OpenCageGeocode(key)
+#     results = geocoder.geocode(address)
+#     if results:
+#         return results[0]['geometry']['lat'], results[0]['geometry']['lng']
+#     return None, None

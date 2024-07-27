@@ -30,6 +30,9 @@
     .left-column {
         flex: 1;
         margin-right: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
     .right-column {
         flex: 1;
@@ -39,6 +42,21 @@
         height: auto;
         border-radius: 8px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .search-address {
+        margin-top: 10px;
+        background-color: #007BFF;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        text-align: center;
+        text-decoration: none;
+    }
+    .search-address:hover {
+        background-color: #0056b3;
     }
     .time-left {
         text-align: center;
@@ -112,6 +130,7 @@
                 <div class="auction-image">
                     <img src="{{ auction.image.url }}" alt="House Image">
                 </div>
+                <a href="https://www.google.com/maps/search/?api=1&query={{ auction.address }}" target="_blank" class="search-address">Search Address</a>
             </div>
             <div class="right-column">
                 <h1>{{ auction.title }}</h1>
