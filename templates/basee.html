@@ -76,7 +76,7 @@
                         </a>
                         <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="{% url 'User:profile_view' %}">View Profile</a></li>
-                        <li><a class="dropdown-item" href="#">Change Password</a></li>
+                        <li><a class="dropdown-item" href="{% url 'User:change_password' %}">Change Password</a></li>
                         <li><a class="dropdown-item" href="#">Wishlist</a></li>
                         <li><a class="dropdown-item" href="#">Winning bids</a></li>
                         <li><a class="dropdown-item" href="{% url 'User:user_logout' %}">Logout</a></li>
@@ -119,13 +119,13 @@
       </nav>
 
 
-    <div class="flex-1 container">
+    <div class=" " >
         {% block content %}
           <p>This is the base template content.</p>
         {% endblock %}
       </div>
 
-    <footer style="background-color: #001f3f;" class="text-white mt-4">
+    <footer style="background-color: #001f3f;" class="text-white ">
         <div class="mx-auto py-8 px-8 flex flex-wrap justify-between items-start">
           <div class="w-full lg:w-2/3 pr-4 mb-4 lg:mb-0">
             <div class="mb-4">
@@ -215,3 +215,70 @@
         </div>
     </footer>
 </body>
+
+
+<!-- css style for search_auctions -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <style>
+        
+        .search-form {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .search-form input {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            flex: 1;
+            margin-right: 10px;
+        }
+
+        .search-form button {
+            padding: 10px 20px;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+        }
+
+        .search-form button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+   
+</body>
+</html>
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Base Template</title>
+    <style>
+        /* Background image style */
+        .background-image {
+            background-image: url('https://media.istockphoto.com/id/174197278/photo/gavel.jpg?s=612x612&w=0&k=20&c=CgacCx48CvY2ugHKRtbD4kUWO8nYhl_9s6ajYiC7Mio=');
+            background-size: cover;
+            background-position: center;
+            min-height: 100vh;
+            background-attachment: fixed;
+        }
+
+        
+    </style>
+</head>
+<body class="background-image">
+    
+</body>
+</html>

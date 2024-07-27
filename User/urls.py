@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-
+from .views import ChangePasswordView
 
 app_name = 'User'
 
@@ -14,5 +14,5 @@ urlpatterns = [
     path('profile_update_page/', views.profile_update_page, name="profile_update_page"),
     path('otp-verification/', views.otp_verification, name='otp_verification'),
     path('mail-verification/', views.mail_verification, name='mail_verification'),
-    # path('change-password/', views.ChangePasswordView.as_view(), name='change_password'),
+    path('change_password/', ChangePasswordView.as_view(), name='change_password'),
 ]

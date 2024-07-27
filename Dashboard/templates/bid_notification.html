@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>New Bid Notification</title>
+</head>
+<body>
+    <h1>New Bid Placed on "{{ auction.title }}"</h1>
+    <p>Dear {{ seller.username }},</p>
+    <p>A new bid has been placed on your auction "{{ auction.title }}".</p>
+    <p><strong>Bidder:</strong> {{ bidder }}</p>
+    <p><strong>Bid Amount:</strong> ${{ bid_price }}</p>
+    <p><strong>Bid Date:</strong> {{ bid_date }}</p>
+    <p>Thank you for using our auction platform.</p>
+</body>
+</html>
