@@ -20,7 +20,8 @@ class Auction(models.Model):
     seller = models.ForeignKey(User, on_delete=models.CASCADE, related_name="auction_seller")
     creation_date = models.DateTimeField(auto_now_add=True)
     end_time = models.DateTimeField(blank=True, null=True)
-    image = models.ImageField(upload_to='auction_item_images/', blank=True, null=True)
+    house_size = models.IntegerField(null=True, blank=True)
+    image = models.ImageField(upload_to='auction_item_images/')
 
     APPROVAL_CHOICES = [
         ('pending', 'Pending'),
@@ -89,3 +90,15 @@ class Advisorslot(models.Model):
 
     def __str__(self) :
         return f"{self.user.username}'s {self.day}'s slot"
+    
+
+#define the model of refund
+class RefundRequest(models.Model):
+    user=models.ForeignKey(User,on_delete=models.CASCADE)
+    reason = models.TextField()
+    bank_branch = models.CharField(max_length=100)
+    bank_account_number = models.CharField(max_length=50)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.reason  

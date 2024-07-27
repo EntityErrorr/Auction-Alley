@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.utils import timezone
 
 from .models import User, Auction, Bid, Category, Comment, Watchlist,Advisorslot
-from .forms import NewCommentForm,BidForm,CreateSlotForm,UpdateSlotForm
+from .forms import NewCommentForm,BidForm,CreateSlotForm,UpdateSlotForm,AuctionItemForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
@@ -13,8 +13,8 @@ from django.core.exceptions import ObjectDoesNotExist
 # views.py
 from django.utils import timezone
 from django.shortcuts import get_object_or_404, render
-from .models import Auction, Bid, Comment, Watchlist
-from .forms import NewCommentForm
+from .models import Auction, Bid, Comment, Watchlist,RefundRequest
+from .forms import NewCommentForm,RefundRequestForm
 
 def AuctionItem(request, auction_id):
     auction = get_object_or_404(Auction, pk=auction_id)
@@ -68,7 +68,7 @@ def LiveAuction(request):
         approval_status='approved',
         end_time__gt=timezone.now()
     ).order_by('-creation_date')
-    return render(request, "home.html", {"auctions": live_auctions})
+    return render(request, "searchresults.html", {"auctions": live_auctions, 'name':'Live Auction'})
 
 
 # from django.shortcuts import get_object_or_404, render, redirect
@@ -962,3 +962,52 @@ def BookSlot(request, id):
             slot.save()
             return redirect(f'/advisors/{slot.user.id}')
 
+def advanced_search_properties(request):
+    if request.method == 'POST':
+        location = request.POST.get('location')
+        property_type_id = request.POST.get('property_type')
+        price_range = request.POST.get('price_range')
+        min_size = request.POST.get('min_size')
+
+        items = Auction.objects.all().exclude(approval_status__in=[ 'pending','rejected'])
+        if location:
+            items = items.filter(address__icontains=location)
+        if property_type_id:
+            # items = items.filter(category=property_type)
+            items = items.filter(category_id=property_type_id)
+        if price_range:
+            items = items.filter(starting_bid__lte=price_range)
+        if min_size:
+            items = items.filter(house_size__gte=min_size)
+
+        return render(request, 'searchresults.html', {'auctions': items})
+
+    return render(request, 'home.html')
+
+def refund_request(request):
+    if request.method == 'POST':
+        form = RefundRequestForm(request.POST)
+        if form.is_valid():
+            form.user=request.user
+            form.save()  
+            return redirect('User:home')
+    else:
+        form = RefundRequestForm()
+    return render(request, 'refund.html', {'form': form})
+
+@login_required 
+def create_auction(request):
+    if request.method == 'POST':
+        form = AuctionItemForm(request.POST, request.FILES)
+        if form.is_valid():
+            print(request.FILES)
+            auction_item = form.save(commit=False)
+            auction_item.seller = request.user
+            auction_item.approval_status = 'pending'
+            print('hih')
+            auction_item.save()
+            return redirect('User:home')
+    else:
+        form = AuctionItemForm()
+
+    return render(request, 'createauction.html', {'form': form})

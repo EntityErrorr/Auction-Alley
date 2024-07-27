@@ -1,0 +1,17 @@
+{% extends 'basee.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="my-3 flex justify-center animate__animated animate__fadeIn animate__delay-1s">
+    <div class="max-w-lg border border-gray-300 p-8 rounded-lg shadow-lg">
+      <h2 class="text-3xl text-indigo-500 font-bold mb-4 hover:text-indigo-700">Sell Your Property at Auction</h2>
+      <form action="{% url 'dashboard:create_auction' %}" method="POST" enctype="multipart/form-data" class="items-center">
+        {% csrf_token %} 
+        {{form|crispy}}
+        <div class="text-center">
+          <button type="submit" class=" items-center px-4 py-2 border border-transparent rounded-md font-semibold text-sm text-white bg-indigo-500 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ml-0">Create Auction</button>
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock %}

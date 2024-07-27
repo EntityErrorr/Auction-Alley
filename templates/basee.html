@@ -96,10 +96,10 @@
                         <a class="nav-link " href="{% url 'dashboard:advisors' %}">Financial Advice</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link " href="#">Sell House</a>
+                        <a class="nav-link " href="{% url 'dashboard:create_auction' %}">Sell House</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link " href="#">Refund</a>
+                        <a class="nav-link " href="{% url 'dashboard:refund' %}">Refund</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link " href="#">Generate Bill</a>
@@ -158,14 +158,14 @@
           <div
             class="w-full my-auto lg:w-1/3 flex flex-col justify-center items-center border-white lg:border-l-2"
           >
-            <div class="mb-1 flex flex-col justify-center items-center">
+            <div class="mb-1  flex flex-col justify-center items-center">
               <div class="flex justify-center lg:justify-end">
                 <a
                   title="FB"
                   href="#"
                   target="_blank"
                   rel="noopener noreferrer"
-                  class="btn btn-outline-white mr-2"
+                  class="btn btn-outline-white text-light mr-2"
                 >
                   <i class="fab fa-facebook-f mx-2"></i>
                 </a>
@@ -174,7 +174,7 @@
                   href="#"
                   target="_blank"
                   rel="noopener noreferrer"
-                  class="btn btn-outline-white mx-2"
+                  class="btn btn-outline-white text-light mx-2"
                 >
                   <i class="fab fa-twitter mx-2"></i>
                 </a>
@@ -183,7 +183,7 @@
                   href="#"
                   target="_blank"
                   rel="noopener noreferrer"
-                  class="btn btn-outline-white mr-2"
+                  class="btn btn-outline-white text-light mr-2"
                 >
                   <i class="fab fa-instagram mx-2"></i>
                 </a>

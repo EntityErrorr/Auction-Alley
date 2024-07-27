@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from .forms import UserRegistrationForm, ProfileForm
 from .models import Profile
-from Dashboard.models import Auction
+from Dashboard.models import Auction,Category
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
 import random
@@ -13,7 +13,7 @@ from datetime import datetime, timedelta
 # Create your views here.
 def home(request):
     return render(request, "home.html", {
-            "auctions": Auction.objects.filter(approval_status__in=[ 'approved']).order_by('-creation_date')
+            "category":Category.objects.all()
         })
 
 def register(request):
