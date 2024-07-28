@@ -143,11 +143,15 @@
                     <p><strong>Category:</strong> {{ auction.category.title }}</p>
                 </div>
                 <h2><b>Place a Bid</b></h2>
+                {% if auction.has_ended %}
+                <div class="notification" style="color: red;">Auction has Ended!</div>
+                {% else %}
                 <form id="bid-form" method="post" action="{% url 'dashboard:bitplacement' auction.id %}">
                     {% csrf_token %}
                     {{ bid_form.as_p }}
                     <button type="submit">Place Bid</button>
                 </form>
+                {% endif %}
                 <div class="notification" id="notification"></div>
             </div>
         </div>
@@ -205,6 +209,15 @@
         var currentBid = parseFloat(document.getElementById('current-bid').innerText.replace('$', ''));
         var startingBid = parseFloat("{{ auction.starting_bid }}");
 
+        var now = new Date().getTime();
+        if (endDateTime <= now) {
+            var notification = document.getElementById('notification');
+            notification.innerText = 'Auction has Ended!';
+            notification.style.display = 'block';
+            notification.style.color = 'red';
+            return;
+        }
+
         if (bidPrice <= startingBid) {
             var notification = document.getElementById('notification');
             notification.innerText = 'Your bid must be higher than the starting bid.';
@@ -221,23 +234,21 @@
             if (xhr.readyState === XMLHttpRequest.DONE) {
                 if (xhr.status === 200) {
                     var response = JSON.parse(xhr.responseText);
-                    if (response.success) {
-                        document.getElementById('current-bid').innerText = response.current_bid;
-                        var notification = document.getElementById('notification');
-                        notification.innerText = response.message;
+                    if (response.status === 'success') {
+                        document.getElementById('current-bid').innerText = response.new_bid;
+                        var bidsList = document.getElementById('bids-list');
+                        var newBid = document.createElement('li');
+                        newBid.innerHTML = `<p><strong>${response.bider}</strong> placed a bid of $${response.new_bid} on ${response.bid_date}</p>`;
+                        bidsList.insertBefore(newBid, bidsList.firstChild);
+                        notification.innerText = 'Bid placed successfully!';
                         notification.style.display = 'block';
                         notification.style.color = 'green';
-                        setTimeout(function() {
-                            location.reload();
-                        }, 2000);
                     } else {
-                        var notification = document.getElementById('notification');
                         notification.innerText = response.message;
                         notification.style.display = 'block';
                         notification.style.color = 'red';
                     }
                 } else {
-                    var notification = document.getElementById('notification');
                     notification.innerText = 'An error occurred. Please try again.';
                     notification.style.display = 'block';
                     notification.style.color = 'red';
@@ -249,40 +260,36 @@
 
     document.getElementById('load-more').addEventListener('click', function() {
         var button = this;
-        var offset = parseInt(button.getAttribute('data-offset'));
-        var limit = parseInt(button.getAttribute('data-limit'));
+        var offset = button.getAttribute('data-offset');
+        var limit = button.getAttribute('data-limit');
         var hasNext = button.getAttribute('data-has-next') === 'true';
 
+        if (!hasNext) {
+            button.style.display = 'none';
+            return;
+        }
+
         var xhr = new XMLHttpRequest();
-        xhr.open('GET', loadBidsUrl + '?offset=' + offset + '&limit=' + limit, true);
-        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+        xhr.open('GET', `${loadBidsUrl}?offset=${offset}&limit=${limit}`, true);
         xhr.onreadystatechange = function() {
             if (xhr.readyState === XMLHttpRequest.DONE) {
                 if (xhr.status === 200) {
                     var response = JSON.parse(xhr.responseText);
-                    if (response.bids.length > 0) {
-                        var bidsList = document.getElementById('bids-list');
-                        response.bids.forEach(function(bid) {
-                            var bidItem = document.createElement('li');
-                            bidItem.innerHTML = '<p><strong>' + bid.bider + '</strong> placed a bid of $' + bid.bid_price + ' on ' + formatDate(bid.bid_date) + '</p>';
-                            bidsList.appendChild(bidItem);
-                        });
-                        button.setAttribute('data-offset', offset + limit);
-                        button.setAttribute('data-has-next', response.has_next);
-                    } else {
+                    var bidsList = document.getElementById('bids-list');
+                    response.bids.forEach(function(bid) {
+                        var bidItem = document.createElement('li');
+                        bidItem.innerHTML = `<p><strong>${bid.bider}</strong> placed a bid of $${bid.bid_price} on ${bid.bid_date}</p>`;
+                        bidsList.appendChild(bidItem);
+                    });
+                    button.setAttribute('data-offset', parseInt(offset) + parseInt(limit));
+                    button.setAttribute('data-has-next', response.has_next);
+                    if (!response.has_next) {
                         button.style.display = 'none';
                     }
-                } else {
-                    console.error('Failed to load bids.');
                 }
             }
         };
         xhr.send();
     });
-
-    function formatDate(dateStr) {
-        var options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true };
-        return new Date(dateStr).toLocaleDateString('en-US', options).replace(',', ' at');
-    }
 </script>
 {% endblock %}

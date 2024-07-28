@@ -23,6 +23,7 @@ class Auction(models.Model):
     end_time = models.DateTimeField(blank=True, null=True)
     house_size = models.IntegerField(null=True, blank=True)
     image = models.ImageField(upload_to='auction_item_images/')
+    winner = models.ForeignKey(User, related_name='won_auctions', on_delete=models.SET_NULL, null=True, blank=True)
     
 
     APPROVAL_CHOICES = [
