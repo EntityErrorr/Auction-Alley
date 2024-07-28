@@ -1,0 +1,53 @@
+{% extends 'basee.html' %}
+
+{% block title %}Past Auctions{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card-deck">
+        <!-- Past Auctions -->
+        <div class="card">
+            <div class="card-header">
+                <h2>Past Auctions</h2>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% for auction in past_auctions %}
+                    <div class="col-md-4 mb-4">
+                        <div class="card">
+                            {% if auction.image %}
+                            <img src="{{ auction.image.url }}" alt="{{ auction.title }} Image" class="card-img-top">
+                            {% endif %}
+                            <div class="card-body">
+                                <h3 class="card-title">{{ auction.title }}</h3>
+                                <p class="card-text text-dark">
+                                    Seller: <a href="{% url 'dashboard:seller_profile' auction.seller.id %}">{{ auction.seller.username }}</a>
+                                </p>
+                                <p class="card-text text-dark mb-0">{{ auction.description|truncatewords:15 }}</p>
+                                {% if auction.winner %}
+                                <p class="card-text font-weight-bold text-primary mb-0">
+                                    Winner: {{ auction.winner.username }}<br>
+                                    Winning Amount: ${{ auction.current_bid }}
+                                </p>
+                                {% else %}
+                                <p class="card-text font-weight-bold text-primary mb-0">
+                                    No Winner
+                                </p>
+                                {% endif %}
+                                <p class="card-text mb-3">
+                                    <small class="text-muted">
+                                        Start Time: <span class="start-time">{{ auction.creation_date|date:"F j, Y, g:i a" }}</span><br>
+                                        End Time: {{ auction.end_time|date:"F j, Y, g:i a" }}
+                                    </small>
+                                </p>
+                                <a href="{% url 'dashboard:bitplacement' auction.id %}" class="btn btn-sm btn-primary">Details</a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

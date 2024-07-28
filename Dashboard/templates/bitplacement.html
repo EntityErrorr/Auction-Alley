@@ -13,7 +13,7 @@
     .container {
         max-width: 1000px;
         margin: auto;
-        background: rgba(255, 255, 255, 0.8); /* Adjust opacity as needed */
+        background: rgba(255, 255, 255, 0.8);
         padding: 20px;
         border-radius: 8px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -101,7 +101,7 @@
         margin-top: 20px;
         font-size: 18px;
         font-weight: bold;
-        display: none; /* Initially hidden */
+        display: none;
     }
     .bids-list {
         margin-top: 20px;
@@ -142,18 +142,15 @@
                     <p><strong>Seller:</strong> {{ auction.seller.username }}</p>
                     <p><strong>Category:</strong> {{ auction.category.title }}</p>
                 </div>
-    
                 <h2><b>Place a Bid</b></h2>
                 <form id="bid-form" method="post" action="{% url 'dashboard:bitplacement' auction.id %}">
                     {% csrf_token %}
                     {{ bid_form.as_p }}
                     <button type="submit">Place Bid</button>
                 </form>
-                
                 <div class="notification" id="notification"></div>
             </div>
         </div>
-        
         <div class="bids-list">
             <h2 class="recent-bids"><b>Recent Bids</b></h2>
             <ul id="bids-list">
@@ -175,30 +172,32 @@
 </div>
 
 <script>
-    // Set the URL for loading bids
     var loadBidsUrl = "{% url 'dashboard:load_bids' auction.id %}";
 
-    // Countdown Timer
     var endDateTime = new Date("{{ auction.end_time|date:'Y-m-d\\TH:i:s' }}").getTime();
+    var now = new Date().getTime();
 
-    var x = setInterval(function() {
-        var now = new Date().getTime();
-        var distance = endDateTime - now;
+    if (endDateTime <= now) {
+        document.getElementById("countdown").innerHTML = "Auction has Ended!";
+    } else {
+        var x = setInterval(function() {
+            var now = new Date().getTime();
+            var distance = endDateTime - now;
 
-        var days = Math.floor(distance / (1000 * 60 * 60 * 24));
-        var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            var seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-        document.getElementById("countdown").innerHTML = days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
+            document.getElementById("countdown").innerHTML = days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
 
-        if (distance < 0) {
-            clearInterval(x);
-            document.getElementById("countdown").innerHTML = "Auction has Ended!";
-        }
-    }, 1000);
+            if (distance < 0) {
+                clearInterval(x);
+                document.getElementById("countdown").innerHTML = "Auction has Ended!";
+            }
+        }, 1000);
+    }
 
-    // Bid Form Submission
     document.getElementById('bid-form').addEventListener('submit', function(event) {
         event.preventDefault();
         var form = this;
@@ -228,8 +227,6 @@
                         notification.innerText = response.message;
                         notification.style.display = 'block';
                         notification.style.color = 'green';
-                        
-                        // Refresh the page after 2 seconds
                         setTimeout(function() {
                             location.reload();
                         }, 2000);
@@ -250,7 +247,6 @@
         xhr.send(formData);
     });
 
-    // Load More Bids
     document.getElementById('load-more').addEventListener('click', function() {
         var button = this;
         var offset = parseInt(button.getAttribute('data-offset'));

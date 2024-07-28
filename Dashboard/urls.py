@@ -21,12 +21,10 @@ urlpatterns = [
     path('search/', views.search_auctions, name='search_auctions'),
     path('Advanced_search/', views.advanced_search_properties, name='advanced_search_properties'),
     path('refund/', views.refund_request, name='refund'),
-    
-    # path('auction_map/<int:auction_id>/', views.auction_map, name='auction_map'),
-    
+    path('end_auction/<int:auction_id>/', views.end_auction, name='end_auction'),
+    path('past-auctions/', views.past_auctions, name='past_auctions'),
+    path('seller/<int:seller_id>/', views.seller_profile, name='seller_profile'),
 ]
-
-    # path('', views.index, name='index'),
 
 
 
