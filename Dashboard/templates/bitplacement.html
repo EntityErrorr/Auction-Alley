@@ -177,6 +177,7 @@
 
 <script>
     var loadBidsUrl = "{% url 'dashboard:load_bids' auction.id %}";
+    var pastAuctionsUrl = "{% url 'dashboard:past_auctions' %}"; // connected with the past_auctions
 
     var endDateTime = new Date("{{ auction.end_time|date:'Y-m-d\\TH:i:s' }}").getTime();
     var now = new Date().getTime();
@@ -198,6 +199,8 @@
             if (distance < 0) {
                 clearInterval(x);
                 document.getElementById("countdown").innerHTML = "Auction has Ended!";
+                // Redirect to the past auctions page
+                window.location.href = pastAuctionsUrl;
             }
         }, 1000);
     }
@@ -230,62 +233,58 @@
         var xhr = new XMLHttpRequest();
         xhr.open('POST', form.action, true);
         xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState === XMLHttpRequest.DONE) {
-                if (xhr.status === 200) {
-                    var response = JSON.parse(xhr.responseText);
-                    if (response.status === 'success') {
-                        document.getElementById('current-bid').innerText = response.new_bid;
-                        var bidsList = document.getElementById('bids-list');
-                        var newBid = document.createElement('li');
-                        newBid.innerHTML = `<p><strong>${response.bider}</strong> placed a bid of $${response.new_bid} on ${response.bid_date}</p>`;
-                        bidsList.insertBefore(newBid, bidsList.firstChild);
-                        notification.innerText = 'Bid placed successfully!';
-                        notification.style.display = 'block';
-                        notification.style.color = 'green';
-                    } else {
-                        notification.innerText = response.message;
-                        notification.style.display = 'block';
-                        notification.style.color = 'red';
-                    }
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                var response = JSON.parse(xhr.responseText);
+                if (response.success) {
+                    var notification = document.getElementById('notification');
+                    notification.innerText = 'Bid placed successfully!';
+                    notification.style.display = 'block';
+                    notification.style.color = 'green';
+                    document.getElementById('current-bid').innerText = bidPrice.toFixed(2);
+                    var newBid = document.createElement('li');
+                    newBid.innerHTML = `<p><strong>${response.bider}</strong> placed a bid of $${bidPrice.toFixed(2)} on ${response.bid_date}</p>`;
+                    document.getElementById('bids-list').insertBefore(newBid, document.getElementById('bids-list').firstChild);
                 } else {
-                    notification.innerText = 'An error occurred. Please try again.';
+                    var notification = document.getElementById('notification');
+                    notification.innerText = response.error;
                     notification.style.display = 'block';
                     notification.style.color = 'red';
                 }
+            } else {
+                var notification = document.getElementById('notification');
+                notification.innerText = 'An error occurred. Please try again.';
+                notification.style.display = 'block';
+                notification.style.color = 'red';
             }
         };
         xhr.send(formData);
     });
 
     document.getElementById('load-more').addEventListener('click', function() {
-        var button = this;
-        var offset = button.getAttribute('data-offset');
-        var limit = button.getAttribute('data-limit');
-        var hasNext = button.getAttribute('data-has-next') === 'true';
+        var offset = this.getAttribute('data-offset');
+        var limit = this.getAttribute('data-limit');
+        var hasNext = this.getAttribute('data-has-next');
 
-        if (!hasNext) {
-            button.style.display = 'none';
-            return;
-        }
+        if (hasNext === 'false') return;
 
         var xhr = new XMLHttpRequest();
-        xhr.open('GET', `${loadBidsUrl}?offset=${offset}&limit=${limit}`, true);
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState === XMLHttpRequest.DONE) {
-                if (xhr.status === 200) {
-                    var response = JSON.parse(xhr.responseText);
-                    var bidsList = document.getElementById('bids-list');
-                    response.bids.forEach(function(bid) {
-                        var bidItem = document.createElement('li');
-                        bidItem.innerHTML = `<p><strong>${bid.bider}</strong> placed a bid of $${bid.bid_price} on ${bid.bid_date}</p>`;
-                        bidsList.appendChild(bidItem);
-                    });
-                    button.setAttribute('data-offset', parseInt(offset) + parseInt(limit));
-                    button.setAttribute('data-has-next', response.has_next);
-                    if (!response.has_next) {
-                        button.style.display = 'none';
-                    }
+        xhr.open('GET', loadBidsUrl + '?offset=' + offset + '&limit=' + limit, true);
+        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                var response = JSON.parse(xhr.responseText);
+                var bidsList = document.getElementById('bids-list');
+                response.bids.forEach(function(bid) {
+                    var newBid = document.createElement('li');
+                    newBid.innerHTML = `<p><strong>${bid.bider}</strong> placed a bid of $${bid.bid_price} on ${bid.bid_date}</p>`;
+                    bidsList.appendChild(newBid);
+                });
+                if (!response.has_next) {
+                    document.getElementById('load-more').setAttribute('data-has-next', 'false');
+                    document.getElementById('load-more').style.display = 'none';
+                } else {
+                    document.getElementById('load-more').setAttribute('data-offset', parseInt(offset) + parseInt(limit));
                 }
             }
         };
