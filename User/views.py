@@ -165,6 +165,7 @@ def profile_update_page(request):
     })
 
 # written by sufi
+#view for change password
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.views import PasswordChangeView
 from django.urls import reverse_lazy
@@ -173,3 +174,66 @@ class ChangePasswordView(PasswordChangeView):
     form_class = PasswordChangeForm
     success_url = reverse_lazy('User:user_login')
     template_name = 'change_password.html'
+
+
+# view for reset password
+from django.urls import reverse_lazy
+from django.contrib.auth.views import PasswordResetView
+from django.contrib.messages.views import SuccessMessageMixin
+class ResetPasswordView(SuccessMessageMixin, PasswordResetView):
+    template_name = 'password_reset.html'
+    email_template_name = 'password_reset_email.html'
+    subject_template_name = 'password_reset_subject.txt'
+    success_message = ("We've emailed you instructions for setting your password, " \
+                      "if an account exists with the email you entered. You should receive them shortly." \
+                      " If you don't receive an email, " \
+                      "please make sure you've entered the address you registered with, and check your spam folder.")
+    success_url = reverse_lazy('User:user_login')
+
+def depo_otp_verification(request):
+    if request.method == 'POST':
+        entered_otp = request.POST.get('otp')
+        otp_in_session = request.session.get('otp')
+        otp_expiry = datetime.strptime(request.session.get('otp_expiry'), '%Y-%m-%d %H:%M:%S')
+
+        if datetime.now() > otp_expiry:
+            messages.error(request, 'OTP has expired. Please request a new one.')
+            return redirect('User:deposite')
+
+        if entered_otp == otp_in_session:
+            amount = request.session.get('amount')
+            profile= Profile.objects.get(user=request.user)
+            profile.amount+=int(amount)
+            profile.save()
+
+            del request.session['otp']
+            del request.session['otp_expiry']
+            del request.session['amount']
+            return redirect('User:profile_view')
+        else:
+            messages.error(request, 'Invalid OTP. Please try again.')
+            return redirect("User:depo_verification")
+
+    return render(request, 'otp_verification.html')
+
+def deposite(request):
+    if request.method == 'POST':
+        Amount = request.POST.get('Amount')
+        print(Amount)
+        if Amount:
+            request.session['amount'] = Amount
+            otp = ''.join(random.choices('0123456789', k=6))
+            request.session['otp'] = otp
+            request.session['otp_expiry'] = (datetime.now() + timedelta(minutes=10)).strftime('%Y-%m-%d %H:%M:%S')
+            
+            send_mail(
+                'OTP for Deposite Verification',
+                f'Your OTP for verifing the Deposite is: {otp}',
+                settings.EMAIL_HOST_USER,
+                [request.user.email],
+                fail_silently=False,
+            )
+            return redirect("User:depo_verification")
+    return render(request,'deposite.html')
+
+

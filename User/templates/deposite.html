@@ -1,33 +1,26 @@
-{% extends 'basee.html' %}
+{% extends "basee.html" %}
+{% load crispy_forms_tags %}
 
 {% block content %}
-
 <div class="container py-5 my-5">
-    <div class="card px-4 my-3">
-        <p class="h8 py-3">OTP Verification</p>
+    <div class="card px-4 my-5">
+        <p class="h8 py-3">Payment Details</p>
 
-        <form method="POST" class="items-center">
+        <form action="{% url 'User:deposite' %}" method="POST" class="items-center">
             {% csrf_token %} 
             <div class="mb-4 text-left">
-              <label for="otp" class="block text-[10px] font-medium text-black/80">Enter OTP</label>
-              <input type="text" id="otp" name="otp" class="form-input mt-1 block w-full rounded-md shadow-sm bg-gray-100 border-2 border-black p-1 " placeholder="Enter Amount...">
+              <label for="Amount" class="block text-[10px] font-medium text-black/80">Amount:</label>
+              <input type="text" id="Amount" name="Amount" class="form-input mt-1 block w-full rounded-md shadow-sm bg-gray-100 border-2 border-black p-1 " placeholder="Enter Amount...">
             </div>
 
             <div class="row gx-3">
                 <div class="col-12">
                     <button type="submit" class="btn btn-primary mb-3 ">
-                        <span class="ps-3">Verify</span>
+                        <span class="ps-3">Deposite</span>
                         <span class="fas fa-arrow-right"></span></button>
                 </div>
             </div>
         </form>
-        {% if messages %}
-            <div class="error-messages">
-                {% for message in messages %}
-                    <div class="error-message">{{ message }}</div>
-                {% endfor %}
-            </div>
-        {% endif %}
     </div>
 </div>
 <style>
@@ -55,7 +48,7 @@ p {
     align-items: center;
     justify-content: space-between;
     padding: 0 15px;
-    background-image: linear-gradient(to right, #77A1D3 0%, #79CBCA 51%, #77A1D3 100%);
+    background-image: linear-gradient(to right,#2F4F4F  0%, #CCFF99 100%);
     border: none;
     transition: 0.5s;
     background-size: 200% auto;
@@ -103,3 +96,4 @@ p {
 }
 </style>
 {% endblock content %}
+
