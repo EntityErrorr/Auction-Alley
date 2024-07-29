@@ -190,7 +190,50 @@ class ResetPasswordView(SuccessMessageMixin, PasswordResetView):
                       "please make sure you've entered the address you registered with, and check your spam folder.")
     success_url = reverse_lazy('User:user_login')
 
+def depo_otp_verification(request):
+    if request.method == 'POST':
+        entered_otp = request.POST.get('otp')
+        otp_in_session = request.session.get('otp')
+        otp_expiry = datetime.strptime(request.session.get('otp_expiry'), '%Y-%m-%d %H:%M:%S')
 
+        if datetime.now() > otp_expiry:
+            messages.error(request, 'OTP has expired. Please request a new one.')
+            return redirect('User:deposite')
 
+        if entered_otp == otp_in_session:
+            amount = request.session.get('amount')
+            profile= Profile.objects.get(user=request.user)
+            profile.amount+=int(amount)
+            profile.save()
+
+            del request.session['otp']
+            del request.session['otp_expiry']
+            del request.session['amount']
+            return redirect('User:profile_view')
+        else:
+            messages.error(request, 'Invalid OTP. Please try again.')
+            return redirect("User:depo_verification")
+
+    return render(request, 'otp_verification.html')
+
+def deposite(request):
+    if request.method == 'POST':
+        Amount = request.POST.get('Amount')
+        print(Amount)
+        if Amount:
+            request.session['amount'] = Amount
+            otp = ''.join(random.choices('0123456789', k=6))
+            request.session['otp'] = otp
+            request.session['otp_expiry'] = (datetime.now() + timedelta(minutes=10)).strftime('%Y-%m-%d %H:%M:%S')
+            
+            send_mail(
+                'OTP for Deposite Verification',
+                f'Your OTP for verifing the Deposite is: {otp}',
+                settings.EMAIL_HOST_USER,
+                [request.user.email],
+                fail_silently=False,
+            )
+            return redirect("User:depo_verification")
+    return render(request,'deposite.html')
 
 
