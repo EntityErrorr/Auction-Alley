@@ -1,0 +1,100 @@
+{% extends 'basee.html' %}
+
+{% block content %}
+
+<style>
+    .advisor-slot-container {
+      margin: 50px auto;
+      width: 100%;
+      max-width: 1200px;
+      background-color: white;
+      padding: 10px;
+      border-radius: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+    .advisor-slot-container table {
+      width: 100%;
+    }
+    .advisor-slot-container table tr {
+      padding: 10px;
+      border: 1px solid black;
+    }
+    .advisor-slot-container table td,
+    .advisor-slot-container table th {
+      padding: 10px;
+      border: 1px solid black;
+    }
+    .advisor-slot-container table td button {
+      border: none;
+      padding: 6px 10px;
+      font-weight: 600;
+      font-size: 16px;
+      width: 20%;
+    }
+    .update {
+      background-color: greenyellow;
+    }
+    .delete {
+      background-color: black;
+      color: white;
+    }
+    .create-slot {
+      margin: 15px 0;
+      padding: 6px 10px;
+      font-size: 16px;
+      font-weight: 600;
+      color: white;
+      background-color: black;
+      border-radius: 4px;
+      border: none;
+      border: 2px solid black;
+      transition: 0.4s;
+      width: 100%;
+    }
+    .create-slot:hover {
+      background-color: white;
+      color: black;
+    }
+    .advisor-slot-container > a {
+      width: 100%;
+    }
+  </style>
+
+<div class="manage-slot-container">
+    <div class="advisor-slot-container">
+      <h3 class="text-center fw-bold fs-3 mb-2">Manage your slots</h3>
+      <table>
+        <tr>
+          <th>Day</th>
+          <th>Start</th>
+          <th>End</th>
+          <th>Max. User</th>
+          <th>Manage</th>
+        </tr>
+  
+        {% for slot in slots %}
+        <tr>
+          <td>{{slot.day}}</td>
+          <td>{{slot.start_time}}</td>
+          <td>{{slot.end_time}}</td>
+          <td>{{slot.max_user}}</td>
+          <td>
+            <a href="{% url 'dashboard:updateSlot' slot.id %}"
+              ><button class="update">Update</button></a
+            >
+            <a href="{% url 'dashboard:deleteSlot' slot.id %}"
+              ><button class="delete">Delete</button></a
+            >
+          </td>
+        </tr>
+        {% endfor %}
+      </table>
+      <a href="{% url 'dashboard:createslot' %}"
+        ><button class="create-slot">Create Slot</button></a
+      >
+    </div>
+  </div>
+{% endblock %}

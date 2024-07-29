@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 # define the models of category
 class Category(models.Model):
@@ -20,7 +21,10 @@ class Auction(models.Model):
     seller = models.ForeignKey(User, on_delete=models.CASCADE, related_name="auction_seller")
     creation_date = models.DateTimeField(auto_now_add=True)
     end_time = models.DateTimeField(blank=True, null=True)
-    image = models.ImageField(upload_to='auction_item_images/', blank=True, null=True)
+    house_size = models.IntegerField(null=True, blank=True)
+    image = models.ImageField(upload_to='auction_item_images/')
+    winner = models.ForeignKey(User, related_name='won_auctions', on_delete=models.SET_NULL, null=True, blank=True)
+    
 
     APPROVAL_CHOICES = [
         ('pending', 'Pending'),
@@ -34,6 +38,11 @@ class Auction(models.Model):
     
     def get_fields(self):
         return [(field.name, getattr(self, field.name)) for field in Auction._meta.fields]
+    
+    @classmethod
+    def get_past_auctions(cls):
+        return cls.objects.filter(end_time__lt=timezone.now())
+
 
 # define the model of a bid
 class Bid(models.Model):
@@ -64,3 +73,52 @@ class Watchlist(models.Model):
 
     def __str__(self):
         return f"{self.user}'s watchlist"
+    
+
+#define the model of advisor
+class Advisorslot(models.Model):
+    user=models.ForeignKey(User,on_delete=models.CASCADE, related_name='slot')
+    d_type = [
+        ('saturday', 'Saturday'),
+        ('sunday', 'Sunday'),
+        ('monday', 'Monday'),
+        ('tuesday', 'Tuesday'),
+        ('wednesday', 'Wednesday'),
+        ('thrusday', 'Thrusday'),
+        ('friday', 'Friday'),
+    ]
+    day =models.CharField(max_length=20, choices=d_type)
+    start_time= models.TimeField()
+    end_time=models.TimeField()
+    message=models.TextField(null=True,blank=True)
+    max_user=models.IntegerField(default=10)
+    total_user=models.IntegerField(default=0, blank=True, null=True)
+    meet_link=models.CharField(max_length=250,null=True,blank=True)
+    booked_user_list= models.ManyToManyField(User,blank=True,related_name='booked_User')
+
+    def __str__(self) :
+        return f"{self.user.username}'s {self.day}'s slot"
+    
+
+#define the model of refund
+class RefundRequest(models.Model):
+    user=models.ForeignKey(User,on_delete=models.CASCADE)
+    reason = models.TextField()
+    bank_branch = models.CharField(max_length=100)
+    bank_account_number = models.CharField(max_length=50)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.reason  
+    
+from django.db import models
+from django.contrib.auth.models import User
+
+class Buyer_Seller(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    phone = models.CharField(max_length=15, blank=True, null=True)
+    address = models.TextField(blank=True, null=True)
+    # Other fields
+
+    def __str__(self):
+        return self.user.username

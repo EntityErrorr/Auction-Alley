@@ -60,11 +60,11 @@
                     {% if request.user.is_staff%}
                         {% if request.user.is_superuser %}
                             <li class="nav-item">
-                                <a class="nav-link" aria-current="page" href="">Admin Panel</a>
+                                <a class="nav-link" aria-current="page" href="{% url 'dashboard:adminapprove' %}">Admin Panel</a>
                             </li>
                         {% else %}
                             <li class="nav-item">
-                                <a class="nav-link" aria-current="page" href="">Manage Slot</a>
+                                <a class="nav-link" aria-current="page" href="{% url 'dashboard:manageslot' %}">Manage Slot</a>
                             </li>
                         {% endif %}
                     {% endif %}
@@ -89,17 +89,17 @@
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="auctionDropdown">
                             <li><a class="dropdown-item" href="{% url 'dashboard:LiveAuction' %}">Live Bidding</a></li>
-                            <li><a class="dropdown-item" href="#">Past Biddings</a></li>
+                            <li><a class="dropdown-item" href="{% url 'dashboard:past_auctions' %}">Past Biddings</a></li>
                         </ul>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link " href="#">Financial Advice</a>
+                        <a class="nav-link " href="{% url 'dashboard:advisors' %}">Financial Advice</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link " href="#">Sell House</a>
+                        <a class="nav-link " href="{% url 'dashboard:create_auction' %}">Sell House</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link " href="#">Refund</a>
+                        <a class="nav-link " href="{% url 'dashboard:refund' %}">Refund</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link " href="#">Generate Bill</a>
@@ -158,14 +158,14 @@
           <div
             class="w-full my-auto lg:w-1/3 flex flex-col justify-center items-center border-white lg:border-l-2"
           >
-            <div class="mb-1 flex flex-col justify-center items-center">
+            <div class="mb-1  flex flex-col justify-center items-center">
               <div class="flex justify-center lg:justify-end">
                 <a
                   title="FB"
                   href="#"
                   target="_blank"
                   rel="noopener noreferrer"
-                  class="btn btn-outline-white mr-2"
+                  class="btn btn-outline-white text-light mr-2"
                 >
                   <i class="fab fa-facebook-f mx-2"></i>
                 </a>
@@ -174,7 +174,7 @@
                   href="#"
                   target="_blank"
                   rel="noopener noreferrer"
-                  class="btn btn-outline-white mx-2"
+                  class="btn btn-outline-white text-light mx-2"
                 >
                   <i class="fab fa-twitter mx-2"></i>
                 </a>
@@ -183,7 +183,7 @@
                   href="#"
                   target="_blank"
                   rel="noopener noreferrer"
-                  class="btn btn-outline-white mr-2"
+                  class="btn btn-outline-white text-light mr-2"
                 >
                   <i class="fab fa-instagram mx-2"></i>
                 </a>
@@ -215,3 +215,74 @@
         </div>
     </footer>
 </body>
+
+
+<!-- css style for search_auctions -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <style>
+        
+        .search-form {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .search-form input {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            flex: 1;
+            margin-right: 10px;
+        }
+
+        .search-form button {
+            padding: 10px 20px;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+        }
+
+        .search-form button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+   
+</body>
+</html>
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Base Template</title>
+    <style>
+        /* Background image style */
+        .background-image {
+            background-image: url('https://media.istockphoto.com/id/486232168/photo/real-estate.jpg?s=612x612&w=0&k=20&c=IYEE_YXByOC6-gKPuX5HxaiLJi1RehrC3i0wdJ9799Y=');
+            background-size: cover;
+            background-position: center;
+            min-height: 100vh;
+            background-attachment: fixed;
+        }
+
+        
+    </style>
+</head>
+<body class="background-image">
+    
+</body>
+</html>
+
+
+
+

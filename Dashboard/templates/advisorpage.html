@@ -1,0 +1,66 @@
+{% extends 'basee.html' %}
+
+
+{% block content %}
+
+
+<style>
+    .advisors-container{
+        width: 100%;
+        max-width: 1200px;
+        margin: 20px auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+        
+    }
+    .advisors-container a {
+        text-decoration: none;
+        color: black;
+    }
+    .advisor-card {
+        min-height: 250px;
+        width: 350px;
+        background-color: white;
+        margin: 10px;
+        border-radius: 10px;
+        padding: 15px;
+        transition: 0.2s background-color ease-in-out;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        margin: 10px;
+        border: 2px solid #007bff;
+    }
+    .advisor-card p {
+        color: #505050;
+        line-height: 2;
+    }
+    .advisor-card:hover {
+        background-color: rgb(235, 235, 235);
+    }
+</style>
+
+
+<h3 class="text-center fw-bold fs-3 my-3">Select your desired Advisor</h3>
+<div class="advisors-container">
+    
+    {% for advisor in advisors %}
+    <a href="{% url 'dashboard:advisorInside' advisor.id %}">
+        <div class="advisor-card">
+            <h4 class="fw-semibold text-uppercase">Name - {{advisor.first_name}} {{advisor.last_name}}</h5>
+            <p>Advisor's email - {{advisor.email}}</p>
+        </div>
+    </a>
+    {% endfor %}
+
+    
+</div>
+
+
+
+
+
+{% endblock %}

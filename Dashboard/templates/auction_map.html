@@ -1,0 +1,36 @@
+<!-- auction_map.html
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    #map {
+        height: 400px;
+        width: 100%;
+        margin-top: 20px;
+    }
+</style>
+
+<div class="container">
+    <h1>{{ auction.title }}</h1>
+    <p><strong>Address:</strong> {{ auction.address }}</p>
+    <div id="map"></div>
+</div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+<script>
+    // Initialize the map
+    var map = L.map('map').setView([{{ auction.latitude }}, {{ auction.longitude }}], 13);
+
+    // Add OSM tile layer
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    // Add a marker for the auction address
+    L.marker([{{ auction.latitude }}, {{ auction.longitude }}]).addTo(map)
+        .bindPopup('<b>{{ auction.title }}</b><br>{{ auction.address }}')
+        .openPopup();
+</script>
+{% endblock %} -->

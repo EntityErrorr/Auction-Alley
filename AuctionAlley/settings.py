@@ -112,6 +112,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# OpenCage API Key
+OPENCAGE_API_KEY = '2139a598829e40faa98ee40396028537'
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
@@ -159,3 +161,6 @@ LOGGING = {
         },
     },
 }
+
+
+

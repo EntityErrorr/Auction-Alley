@@ -1,0 +1,23 @@
+{% extends 'basee.html' %}
+
+{% block content %}
+<div class="container mt-4 rounded" style="background-color: rgba(0, 0, 58, 0.95);">
+    <h2 style="color: white;">Request Refund</h2>
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="reason" style="color: white;">Reason for Refund:</label>
+            <textarea class="form-control" id="reason" name="reason" rows="3"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="bank_branch" style="color: white;">Bank Branch:</label>
+            <input type="text" class="form-control" id="bank_branch" name="bank_branch">
+        </div>
+        <div class="form-group">
+            <label for="bank_account_number" style="color: white;">Bank Account Number:</label>
+            <input type="text" class="form-control" id="bank_account_number" name="bank_account_number">
+        </div>
+        <button type="submit" class="btn btn-success btn-sm">Submit Refund Request</button>
+    </form>
+</div>
+{% endblock %}

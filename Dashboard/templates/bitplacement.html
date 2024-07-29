@@ -13,7 +13,7 @@
     .container {
         max-width: 1000px;
         margin: auto;
-        background: rgba(255, 255, 255, 0.8); /* Adjust opacity as needed */
+        background: rgba(255, 255, 255, 0.8);
         padding: 20px;
         border-radius: 8px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -30,6 +30,9 @@
     .left-column {
         flex: 1;
         margin-right: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
     .right-column {
         flex: 1;
@@ -39,6 +42,21 @@
         height: auto;
         border-radius: 8px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .search-address {
+        margin-top: 10px;
+        background-color: #007BFF;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        text-align: center;
+        text-decoration: none;
+    }
+    .search-address:hover {
+        background-color: #0056b3;
     }
     .time-left {
         text-align: center;
@@ -83,7 +101,7 @@
         margin-top: 20px;
         font-size: 18px;
         font-weight: bold;
-        display: none; /* Initially hidden */
+        display: none;
     }
     .bids-list {
         margin-top: 20px;
@@ -102,7 +120,6 @@
     }
 </style>
 
-
 <div class="nihal m-0 p-0" style="width: 100%;">
     <div class="container">
         <div class="content">
@@ -113,6 +130,7 @@
                 <div class="auction-image">
                     <img src="{{ auction.image.url }}" alt="House Image">
                 </div>
+                <a href="https://www.google.com/maps/search/?api=1&query={{ auction.address }}" target="_blank" class="search-address">Search Address</a>
             </div>
             <div class="right-column">
                 <h1>{{ auction.title }}</h1>
@@ -124,18 +142,19 @@
                     <p><strong>Seller:</strong> {{ auction.seller.username }}</p>
                     <p><strong>Category:</strong> {{ auction.category.title }}</p>
                 </div>
-    
                 <h2><b>Place a Bid</b></h2>
+                {% if auction.has_ended %}
+                <div class="notification" style="color: red;">Auction has Ended!</div>
+                {% else %}
                 <form id="bid-form" method="post" action="{% url 'dashboard:bitplacement' auction.id %}">
                     {% csrf_token %}
                     {{ bid_form.as_p }}
                     <button type="submit">Place Bid</button>
                 </form>
-                
+                {% endif %}
                 <div class="notification" id="notification"></div>
             </div>
         </div>
-        
         <div class="bids-list">
             <h2 class="recent-bids"><b>Recent Bids</b></h2>
             <ul id="bids-list">
@@ -157,36 +176,50 @@
 </div>
 
 <script>
-    // Set the URL for loading bids
     var loadBidsUrl = "{% url 'dashboard:load_bids' auction.id %}";
+    var pastAuctionsUrl = "{% url 'dashboard:past_auctions' %}"; // connected with the past_auctions
 
-    // Countdown Timer
     var endDateTime = new Date("{{ auction.end_time|date:'Y-m-d\\TH:i:s' }}").getTime();
+    var now = new Date().getTime();
 
-    var x = setInterval(function() {
-        var now = new Date().getTime();
-        var distance = endDateTime - now;
+    if (endDateTime <= now) {
+        document.getElementById("countdown").innerHTML = "Auction has Ended!";
+    } else {
+        var x = setInterval(function() {
+            var now = new Date().getTime();
+            var distance = endDateTime - now;
 
-        var days = Math.floor(distance / (1000 * 60 * 60 * 24));
-        var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            var seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-        document.getElementById("countdown").innerHTML = days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
+            document.getElementById("countdown").innerHTML = days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
 
-        if (distance < 0) {
-            clearInterval(x);
-            document.getElementById("countdown").innerHTML = "Auction has Ended!";
-        }
-    }, 1000);
+            if (distance < 0) {
+                clearInterval(x);
+                document.getElementById("countdown").innerHTML = "Auction has Ended!";
+                // Redirect to the past auctions page
+                window.location.href = pastAuctionsUrl;
+            }
+        }, 1000);
+    }
 
-    // Bid Form Submission
     document.getElementById('bid-form').addEventListener('submit', function(event) {
         event.preventDefault();
         var form = this;
         var bidPrice = parseFloat(form.elements['bid_price'].value);
-        var currentBid = parseFloat(document.getElementById('current-bid').innerText);
+        var currentBid = parseFloat(document.getElementById('current-bid').innerText.replace('$', ''));
         var startingBid = parseFloat("{{ auction.starting_bid }}");
+
+        var now = new Date().getTime();
+        if (endDateTime <= now) {
+            var notification = document.getElementById('notification');
+            notification.innerText = 'Auction has Ended!';
+            notification.style.display = 'block';
+            notification.style.color = 'red';
+            return;
+        }
 
         if (bidPrice <= startingBid) {
             var notification = document.getElementById('notification');
@@ -196,81 +229,66 @@
             return;
         }
 
-        var formData = new FormData(form); 
+        var formData = new FormData(form);
         var xhr = new XMLHttpRequest();
         xhr.open('POST', form.action, true);
         xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState === XMLHttpRequest.DONE) {
-                if (xhr.status === 200) {
-                    var response = JSON.parse(xhr.responseText);
-                    if (response.success) {
-                        document.getElementById('current-bid').innerText = response.current_bid;
-                        var notification = document.getElementById('notification');
-                        notification.innerText = response.message;
-                        notification.style.display = 'block';
-                        notification.style.color = 'green';
-                        
-                        // Optionally, add the new bid to the recent bids list
-                        var bidsList = document.getElementById('bids-list');
-                        var newBidItem = document.createElement('li');
-                        newBidItem.innerHTML = '<p><strong>' + response.bider + '</strong> placed a bid of $' + response.bid_price + ' on ' + formatDate(response.bid_date) + '</p>';
-                        bidsList.insertBefore(newBidItem, bidsList.firstChild);
-                    } else {
-                        var notification = document.getElementById('notification');
-                        notification.innerText = response.message;
-                        notification.style.display = 'block';
-                        notification.style.color = 'red';
-                    }
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                var response = JSON.parse(xhr.responseText);
+                if (response.success) {
+                    var notification = document.getElementById('notification');
+                    notification.innerText = 'Bid placed successfully!';
+                    notification.style.display = 'block';
+                    notification.style.color = 'green';
+                    document.getElementById('current-bid').innerText = bidPrice.toFixed(2);
+                    var newBid = document.createElement('li');
+                    newBid.innerHTML = `<p><strong>${response.bider}</strong> placed a bid of $${bidPrice.toFixed(2)} on ${response.bid_date}</p>`;
+                    document.getElementById('bids-list').insertBefore(newBid, document.getElementById('bids-list').firstChild);
                 } else {
                     var notification = document.getElementById('notification');
-                    notification.innerText = 'An error occurred. Please try again.';
+                    notification.innerText = response.error;
                     notification.style.display = 'block';
                     notification.style.color = 'red';
                 }
+            } else {
+                var notification = document.getElementById('notification');
+                notification.innerText = 'An error occurred. Please try again.';
+                notification.style.display = 'block';
+                notification.style.color = 'red';
             }
         };
         xhr.send(formData);
     });
 
-    // Load More Bids
     document.getElementById('load-more').addEventListener('click', function() {
-        var button = this;
-        var offset = parseInt(button.getAttribute('data-offset'));
-        var limit = parseInt(button.getAttribute('data-limit'));
-        var hasNext = button.getAttribute('data-has-next') === 'true';
+        var offset = this.getAttribute('data-offset');
+        var limit = this.getAttribute('data-limit');
+        var hasNext = this.getAttribute('data-has-next');
+
+        if (hasNext === 'false') return;
 
         var xhr = new XMLHttpRequest();
         xhr.open('GET', loadBidsUrl + '?offset=' + offset + '&limit=' + limit, true);
         xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState === XMLHttpRequest.DONE) {
-                if (xhr.status === 200) {
-                    var response = JSON.parse(xhr.responseText);
-                    if (response.bids.length > 0) {
-                        var bidsList = document.getElementById('bids-list');
-                        response.bids.forEach(function(bid) {
-                            var bidItem = document.createElement('li');
-                            bidItem.innerHTML = '<p><strong>' + bid.bider + '</strong> placed a bid of $' + bid.bid_price + ' on ' + formatDate(bid.bid_date) + '</p>';
-                            bidsList.appendChild(bidItem);
-                        });
-                        button.setAttribute('data-offset', offset + limit);
-                        button.setAttribute('data-has-next', response.has_next);
-                    } else {
-                        button.style.display = 'none';
-                    }
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                var response = JSON.parse(xhr.responseText);
+                var bidsList = document.getElementById('bids-list');
+                response.bids.forEach(function(bid) {
+                    var newBid = document.createElement('li');
+                    newBid.innerHTML = `<p><strong>${bid.bider}</strong> placed a bid of $${bid.bid_price} on ${bid.bid_date}</p>`;
+                    bidsList.appendChild(newBid);
+                });
+                if (!response.has_next) {
+                    document.getElementById('load-more').setAttribute('data-has-next', 'false');
+                    document.getElementById('load-more').style.display = 'none';
                 } else {
-                    console.error('Failed to load bids.');
+                    document.getElementById('load-more').setAttribute('data-offset', parseInt(offset) + parseInt(limit));
                 }
             }
         };
         xhr.send();
     });
-
-    function formatDate(dateStr) {
-        var options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true };
-        return new Date(dateStr).toLocaleDateString('en-US', options).replace(',', ' at');
-    }
 </script>
 {% endblock %}
-

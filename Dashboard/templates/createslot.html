@@ -1,0 +1,68 @@
+{% extends "basee.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<style>
+    body {
+      font-family: Arial, sans-serif;
+      background: transparent;
+      margin: 0;
+      padding: 0;
+    }
+
+    .slot-container {
+      max-width: 500px;
+      width: 100%;
+      margin: 50px auto;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    }
+
+    .slot-container form {
+      width: 100%;
+    }
+    label {
+      font-weight: bold;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 8px;
+      margin: 5px 0;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    input[type="submit"] {
+      margin-left: 50px;
+      width: 80%;
+      background-color: #4caf50;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    input[type="submit"]:hover {
+      background-color: #45a049;
+    }
+  </style>
+
+    <div class="slot-container">
+        <h2 class="text-center fw-bold fs-2">Create New Slot</h2>
+        <form action="{% url 'dashboard:createslot' %}" method="post">
+            {% csrf_token %}
+            {{ form|crispy }}
+            <input type="submit" value="Create Slot" />
+          </form>
+      </div>
+
+{% endblock content %}

@@ -1,16 +1,19 @@
+
+
 {% extends 'basee.html' %}
 
 {% block content %}
 
-<!-- <div class="container mt-5">
+<div class="container my-5">
   <div class="row justify-content-center">
     <div class="col-md-6 text-center">
       <h1 class="animate__animated animate__fadeIn animate__delay-1s">Welcome to Auction House</h1>
-      <h6 class="animate__animated animate__fadeIn animate__delay-2s">Where Homes Meet Opportunities</h6>
-      <div class="flex justify-center animate__animated animate__fadeIn animate__delay-3s">
+      <h6 class="animate__animated animate__fadeIn animate__delay-1s">Where Homes Meet Opportunities</h6>
+      <div class="mt-2 flex justify-center animate__animated animate__fadeIn animate__delay-2s">
         <div class="max-w-lg border border-gray-300 p-8 rounded-lg shadow-lg">
           <h2 class="text-3xl text-indigo-500 font-bold mb-4 hover:text-indigo-700">Find Your Next Property at Auction</h2>
-          <form action="#" method="GET" class="items-center">
+          <form action="{% url 'dashboard:advanced_search_properties' %}" method="POST" class="items-center">
+            {% csrf_token %} 
             <div class="mb-4 text-left">
               <label for="location" class="block text-[10px] font-medium text-black/80">Location:</label>
               <input type="text" id="location" name="location" class="form-input mt-1 block w-full rounded-md shadow-sm bg-gray-100 border-2 border-black p-1 " placeholder="Enter location...">
@@ -19,20 +22,20 @@
               <label for="property_type" class="block text-[10px] font-medium text-black/80">Property Type:</label>
               <select id="property_type" name="property_type" class="form-select mt-1 block w-full rounded-md shadow-sm bg-gray-100 border-2 border-black p-1">
                 <option value="">Select property type...</option>
-                <option value="Bunglow">Bunglow</option>
-                <option value="Duplex">Duplex</option>
-                <option value="Flat">Flat</option>
-                <option value="Normal">Normal</option>
+                {% for cat in category%}
+                <option value="{{cat.id}}">{{cat.title}}</option>
+                {% endfor %}
               </select>
             </div>
             <div class="mb-4 text-left">
               <label for="price_range" class="block text-[10px] font-medium text-black/80">Price Range:</label>
               <select id="price_range" name="price_range" class="form-select mt-1 block w-full rounded-md shadow-sm bg-gray-100 border-2 border-black p-1 shadow-sm">
                 <option value="">Select price range...</option>
-                <option value="500000">500,000</option>
-                <option value="1000000">1,000,000</option>
-                <option value="2000000">2,000,000</option>
-                <option value="4000000">+4,000,000</option>
+                <option value="10000000">0 - 1,0000,000</option>
+                <option value="30000000">0 - 3,0000,000</option>
+                <option value="50000000">0 - 5,0000,000</option>
+                <option value="70000000">0 - 7,0000,000</option>
+                <option value="200000000">+10,0000,000</option>
               </select>
             </div>
             <div class="mb-4 text-left">
@@ -53,28 +56,8 @@
       </div>
     </div>
   </div>
-</div> -->
+</div> 
 
-<div class="container py-3">
-  <h2 class="fs-1 my-2 text-center"><u>All Listing</u></h2>
-  {% for auction in auctions %}
-      
-  <div class="card mb-3 container">
-    <div class="row ">
-      <div class="col-md-6">
-        <img src="{{ auction.image.url }}" class="img-fluid rounded-start" alt="auction.image">
-      </div>
-      <div class="col-md-6">
-        <div class="card-body">
-          <h5 class="card-title fs-1"><a href="{% url 'dashboard:AuctionItem' auction.id %}" style="color: inherit;"><strong>{{ auction.title }}</strong></a></h5>
-          <p class="card-text "> <span class="fw-semibold">Description: </span>{{ auction.description }}</p>
-          <p class="card-text "><span class="fw-semibold">Category: </span>{{ auction.category }}</p>
-          <h3><span><strong style="font-size: 25px">Asking price:</strong></span><strong style="font-size: 20px"><p>BDT {{ auction.starting_bid }}</p></strong></h3>
-          <p><small>Created on: {{ auction.creation_date }}</small></p>
-        </div>
-      </div>
-    </div>
-  </div>
-  {% endfor %}
-</div>
 {% endblock %}
+
+

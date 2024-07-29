@@ -1,7 +1,7 @@
 {% extends 'basee.html' %}
 
 {% block content %}
-    <div class="container">
+    <div class="container my-5">
         <div class="card mb-3 container">
             <div class="row ">
                 <!-- Auction listing's image -->
@@ -21,7 +21,8 @@
                     {% endif %}
 
                     <p class="card-text "> <span class="fw-semibold">Description: </span>{{ auction.description }}</p>
-                    <p class="card-text mb-4"><span class="fw-semibold">Category: </span>{{ auction.category }}</p>
+                    <p class="card-text "><span class="fw-semibold">Category: </span>{{ auction.category }}</p>
+                    <p class="card-text mb-4"><span class="fw-semibold">Size: </span>{{ auction.house_size }} sq ft.</p>
                     <h3 class="mb-2"><span><strong style="font-size: 23px">Starting Bid:</strong></span><strong style="font-size: 18px"><p>BDT {{ auction.starting_bid }}</p></strong></h3>
                     <h3 class="mb-2"><span><strong style="font-size: 23px">Current Bid:</strong></span><strong style="font-size: 18px"><p>BDT {{ auction.current_bid }}</p></strong></h3>
                     <p class="card-text "><span class="fw-semibold">Seller: </span>{{ auction.seller.username }}</p>
