@@ -456,7 +456,66 @@ def winner_bid_profile(request):
     return render(request, 'winner_bid_profile.html', {'past_auctions': auctions})
 
 
+
+
+@login_required
 def purchase_process(request, auction_id):
     auction = get_object_or_404(Auction, id=auction_id)
-    # Add purchase logic here
-    return render(request, 'purchase_process.html', {'auction': auction})
+    purchase_success = False
+
+    if request.method == 'POST':
+        subject_user = 'Purchase Confirmation'
+        message_user = f'''
+        Dear {request.user.username},
+
+        Congratulations!
+
+        You have successfully purchased the property "{auction.title}".
+
+        The winning amount is ${auction.current_bid}.
+
+        Thank you for using our auction service.
+
+        Best regards,
+        Auction Alley Team
+        '''
+        from_email = settings.DEFAULT_FROM_EMAIL
+        recipient_list_user = [request.user.email]
+
+        send_mail(subject_user, message_user, from_email, recipient_list_user)
+        print(f'Email sent successfully to the user {request.user.email}')
+
+        # Notify the seller
+        if auction.seller:
+            subject_seller = 'Your Property Has Been Purchased'
+            message_seller = f'''
+            Dear {auction.seller.username},
+
+            Congratulations!
+
+            Your property "{auction.title}" has been purchased successfully.
+
+            The winning amount is ${auction.current_bid}.
+
+            Please prepare the necessary paperwork for the transaction.
+
+            Thank you for using our auction service.
+
+            Best regards,
+            Auction Alley Team
+            '''
+            recipient_list_seller = [auction.seller.email]
+
+            send_mail(subject_seller, message_seller, from_email, recipient_list_seller)
+            print(f'Email sent successfully to the seller {auction.seller.email}')
+
+        purchase_success = True
+
+    return render(request, 'purchase_process.html', {
+        'auction': auction,
+        'purchase_success': purchase_success
+    })
+
+
+
+
