@@ -1,20 +1,26 @@
 {% extends 'basee.html' %}
-{% load crispy_forms_tags %}
 
 {% block content %}
     <section class="vh-100" style="background-color: rgba(249, 240, 223, 0.5);">
         <div class="container py-5 h-100">
             <div class="row d-flex justify-content-center align-items-center h-100">
                 <div class="col-md-8">
-                    <div class="card profile-update-card" style="border-radius: .5rem;">
-                        <div class="card-header update-header text-center">
-                            <h3 class="mb-0">Update Your Profile</h3>
+                    <div class="card upload-card" style="border-radius: .5rem;">
+                        <div class="card-header upload-header text-center">
+                            <h3 class="mb-0">Upload Your Profile Picture</h3>
                         </div>
-                        <div class="card-body update-content">
-                            <form method="post">
+                        <div class="card-body upload-content text-center">
+                            <form method="post" enctype="multipart/form-data">
                                 {% csrf_token %}
-                                {{ profile_form | crispy }}
-                                <button type="submit" class="btn btn-primary">Update Profile</button>
+                                <div class="mb-4">
+                                    {% if profile.profile_picture %}
+                                        <img src="{{ profile.profile_picture.url }}" alt="Current Avatar" class="img-fluid mb-3" style="width: 120px; border-radius: 50%;" />
+                                    {% else %}
+                                        <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp" alt="Default Avatar" class="img-fluid mb-3" style="width: 120px; border-radius: 50%;" />
+                                    {% endif %}
+                                    <input type="file" name="profile_picture" class="form-control-file" required />
+                                </div>
+                                <button type="submit" class="btn btn-primary">Upload Picture</button>
                             </form>
                         </div>
                     </div>
@@ -24,24 +30,23 @@
     </section>
 
     <style>
-        .profile-update-card {
+        .upload-card {
             background-color: #f8f9fa;
             border: 1px solid #dee2e6;
             border-radius: .5rem;
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
         }
-        .update-header {
+        .upload-header {
             background-color: #007bff;
             color: white;
             padding: 15px;
             border-radius: .5rem .5rem 0 0;
         }
-        .update-content {
+        .upload-content {
             padding: 30px;
         }
-        .form-control {
-            border-radius: .25rem;
-            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+        .form-control-file {
+            margin: 20px 0;
         }
         .btn-primary {
             background-image: linear-gradient(to right, #f9d71c, #f4c542); /* Glossy golden gradient */

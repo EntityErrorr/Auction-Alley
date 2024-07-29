@@ -1,0 +1,98 @@
+{% extends "basee.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+    <div class="container my-5 p-3">
+        <div class="row justify-content-center p-3">
+            <div class="col-md-8 p-2">
+                <div class="card membership-card d-flex align-items-center">
+                    <div class="card-header membership-header mt-3">
+                        <h3 class="mb-0">Exclusive Premium Membership Benefits</h3>
+                    </div>
+                    <div class="card-body membership-content text-center">
+                        <p>
+                            As a <span class="highlight">premium member</span>, you'll enjoy a host of exceptional advantages designed to enhance your experience. 
+                            Gain the opportunity to <span class="highlight">get verified</span> and showcase a profile picture that sets you apart. Enjoy exclusive 
+                            <span class="highlight">early access to auctions</span>—get a head start with a full <span class="highlight">three hours</span> ahead of other users. 
+                            Plus, benefit from a <span class="highlight">2% discount</span> on all auction purchases, making every bid more rewarding. Elevate your experience 
+                            today by becoming a premium member and take full advantage of these premium perks!
+                        </p>
+                        <p class="price-info">
+                            <strong>Membership Price:</strong> <span class="highlight">10000 BDT</span>
+                        </p>
+                        <div class="button-wrapper">
+                            <a href="{% url 'User:confirm_membership' %}" class="btn btn-primary">
+                                <span class="ps-3">Become Premium Member &nbsp;&nbsp; </span>
+                                <span class="fas fa-arrow-right"></span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .membership-card {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: .25rem;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            height: auto;
+            max-height: 600px; 
+            display: flex;
+            flex-direction: column;
+            justify-content: center; 
+        }
+        .membership-header {
+            background-color: #007bff;
+            color: white;
+            padding: 10px;
+            border-radius: .25rem .25rem 0 0;
+        }
+        .membership-content {
+            padding: 20px;
+        }
+        .highlight {
+            color: #007bff;
+            font-weight: bold;
+        }
+        .price-info {
+            margin: 20px 0;
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #333;
+        }
+        .button-wrapper {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .btn.btn-primary {
+            width: 100%;
+            max-width: 350px; /* Set max width for button */
+            height: 60px; /* Adjust button height */
+            display: flex;
+            align-items: center;
+            justify-content: center; /* Center text and icon */
+            padding: 0 15px;
+            background-image: linear-gradient(to right, #f9d71c, #f4c542); /* Glossy golden gradient */
+            border: none;
+            transition: background-position 0.5s, color 0.5s;
+            background-size: 200% auto;
+            color: white;
+            font-size: 1rem; 
+            text-align: center; 
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Glossy effect */
+        }
+        .btn.btn-primary:hover {
+            background-position: right center;
+            color: #fff;
+            text-decoration: none;
+        }
+        .btn.btn-primary:hover .fas.fa-arrow-right {
+            transform: translate(10px);
+            transition: transform 0.2s ease-in;
+        }
+    </style>
+{% endblock content %}
