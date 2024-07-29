@@ -447,4 +447,16 @@ def seller_profile(request, seller_id):
 
 
 
-  
+
+
+def winner_bid_profile(request):
+    user = request.user
+    # Fetch auctions where the logged-in user is the winner
+    auctions = Auction.objects.filter(winner=user)
+    return render(request, 'winner_bid_profile.html', {'past_auctions': auctions})
+
+
+def purchase_process(request, auction_id):
+    auction = get_object_or_404(Auction, id=auction_id)
+    # Add purchase logic here
+    return render(request, 'purchase_process.html', {'auction': auction})
