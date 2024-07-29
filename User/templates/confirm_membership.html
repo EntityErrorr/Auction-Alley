@@ -1,0 +1,55 @@
+{% extends "basee.html" %}
+{% block content %}
+    <div class="container my-5 p-3">
+        <div class="row justify-content-center p-3">
+            <div class="col-md-6 p-2">
+                <div class="card confirmation-card">
+                    <div class="card-header confirmation-header">
+                        <h3 class="mb-0 text-center">Confirm Membership Purchase</h3>
+                    </div>
+                    <div class="card-body confirmation-content text-center">
+                        <p>
+                            You are about to purchase the <span class="highlight">Premium Membership</span> for <span class="highlight">5000 BDT</span>.
+                            This will give you exclusive benefits, including early access to auctions and a discount on all auction purchases.
+                        </p>
+                        <p class="price-info">
+                            Membership Price: <span class="highlight">5000 BDT</span>
+                        </p>
+                        <form method="post" action="{% url 'User:confirm_membership' %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-primary mt-4">Confirm and Pay</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .confirmation-card {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: .25rem;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+        .confirmation-header {
+            background-color: #007bff;
+            color: white;
+            padding: 10px;
+            border-radius: .25rem .25rem 0 0;
+        }
+        .confirmation-content {
+            padding: 20px;
+        }
+        .highlight {
+            color: #007bff;
+            font-weight: bold;
+        }
+        .price-info {
+            margin: 20px 0;
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+{% endblock content %}

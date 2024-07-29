@@ -9,12 +9,17 @@ from django.core.mail import send_mail
 from django.contrib import messages
 from django.conf import settings
 from datetime import datetime, timedelta
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 def home(request):
     return render(request, "home.html", {
             "category":Category.objects.all()
         })
+
+def aboutUs(request):
+    return render(request,'aboutUs.html')  
+
 
 def register(request):
     if request.method == 'POST':
@@ -108,10 +113,12 @@ def user_logout(request):
     logout(request)
     return redirect('User:home')
 
+@login_required
 def profile_view(request):
     profile = request.user.profile
     return render(request, 'profile_view.html', {'profile': profile})
 
+@login_required
 def profile_update(request):
     if request.user.is_authenticated:
         otp = ''.join(random.choices('0123456789', k=6))
@@ -149,6 +156,7 @@ def otp_verification(request):
 
     return render(request, 'otp_verification.html')
 
+@login_required
 def profile_update_page(request):
     profile = Profile.objects.get(user=request.user)
 
@@ -216,6 +224,7 @@ def depo_otp_verification(request):
 
     return render(request, 'otp_verification.html')
 
+@login_required
 def deposite(request):
     if request.method == 'POST':
         Amount = request.POST.get('Amount')
@@ -237,3 +246,41 @@ def deposite(request):
     return render(request,'deposite.html')
 
 
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from .models import Profile
+# from .forms import ProfilePicForm
+from django.utils import timezone
+
+@login_required
+def upload_profile_pic(request):
+    profile = request.user.profile
+    if request.method == 'POST':
+        form = request.FILES.get('profile_picture')
+        if form:
+            profile = Profile.objects.get(user=request.user)
+            profile.profile_picture = form
+            profile.save()
+            return redirect('User:profile_view')  
+    return render(request, 'upload_profile.html', {'profile': profile})
+
+
+
+@login_required
+def confirm_membership(request):
+    if request.method == 'POST':
+        user_profile = Profile.objects.get(user=request.user)
+        
+        if user_profile.amount >= 5000:
+            user_profile.amount -= 5000
+            user_profile.activate_membership()
+            user_profile.save()
+            return redirect('User:profile_view') 
+        else:
+            return redirect('User:confirm_membership')
+    
+    return render(request, 'confirm_membership.html')
+
+def membership(request):
+    return render(request,"membership.html")

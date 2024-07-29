@@ -2,76 +2,84 @@
 
 {% block content %}
 
-    <style>
-        /* Custom CSS for the profile view */
-        .profile-card {
-            background-color: rgba(249, 240, 223, 0.5); /* Transparent background color */
-            padding: 20px; /* Padding */
-            border-radius: 15px; /* Rounded corners */
-            box-shadow: 0 4px 8px 0 rgba(98, 62, 11, 0.2); /* Shadow effect */
-            color: white; /* Text color */
-            width: 360px; /* Card width */
-            align-items: left; /* Center content vertically */
-            align-self: center; /* Center card horizontally */
-        }
+      <section class="vh-100" style="background-color:  rgba(249, 240, 223, 0.5);;">
+        <div class="container py-5 h-100">
+          <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col col-lg-6 mb-4 mb-lg-0">
+              <div class="card mb-3" style="border-radius: .5rem;">
+                <div class="row g-0">
+                  <div class="col-md-4 gradient-custom text-center text-white"
+                    style="border-top-left-radius: .5rem; border-bottom-left-radius: .5rem;">
 
-        /* Custom CSS for the profile card title */
-        .profile-card p {
-            text-align: left; /* Center text */
-            margin-bottom: 20px; /* Bottom margin */
-            font-size: 20px; /* Font size */
-            font-weight: 10; /* Bold text */
-            color: rgb(40, 42, 95);
-        }
+                    {%if profile.profile_picture%}
+                        <img src="{{ profile.profile_picture.url }}"alt="Avatar" class="img-fluid mx-5 my-3" style="width: 120px;" />
+                        <h5 class="fw-bold fs-3">{{ profile.user.username |title }}</h5>
+                    {%else%}
+                        <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp"
+                        alt="Avatar" class="img-fluid my-5" style="width: 80px;" />
+                        <h5 class="fw-bold fs-3">{{ profile.user.username |title }}</h5>
+                    {%endif%}
 
-        /* Custom CSS for profile details */
-        .profile-details {
-            text-align: left; /* Align text to the left */
-            margin-bottom: 10px; /* Bottom margin */
-        }
+                    {% if user.profile.is_premium %}
+                    <i class="fas fa-crown"></i>
+                    {% endif %}
 
-        /* Custom CSS for update button */
-        .update-button {
-            background: linear-gradient(130deg, rgb(40, 42, 95), rgb(103, 103, 134), rgb(40, 42, 95)); /* Gradient background */
-            border: none; /* Remove border */
-            color: white; /* Text color */
-            padding: 10px 25px; /* Padding */
-            text-align: center; /* Center text */
-            text-decoration: none; /* Remove underline */
-            display: inline-block; /* Make it inline block */
-            font-size: 18px; /* Font size */
-            border-radius: 10px; /* Rounded corners */
-            cursor: pointer; /* Add cursor pointer */
-            transition: background-color 0.3s; /* Add transition for hover effect */
-        }
+                  </div>
+                  <div class="col-md-8">
+                    <div class="card-body p-4">
+                      <h6>Information</h6>
+                      <hr class="mt-0 mb-4">
+                      <div class="row pt-1">
+                        <div class="col-6 mb-3">
+                          <h6>Email</h6>
+                          <p class="text-muted">{{ profile.user.email }}</p>
+                        </div>
+                        <div class="col-6 mb-3">
+                          <h6>Phone</h6>
+                          <p class="text-muted">{{ profile.phone }}</p>
+                        </div>
+                        <div class="col-6 mb-3">
+                          <h6>Address</h6>
+                          <p class="text-muted">{{ profile.address }}</p>
+                        </div>
+                        <div class="col-6 mb-3">
+                          <h6>Amount</h6>
+                          <p class="text-muted">{{ profile.amount }}</p>
+                        </div>
+                      </div>
+                      <hr class="mt-0 mb-4">
 
-        /* Hover effect for update button */
-        .update-button:hover {
-            background-color: #001f3f; /* Darker gradient background color */
-        }
-    </style>
-
-    <br><br><br><br>
-    {% if user.is_authenticated %}
-    <div class="container d-flex justify-content-center align-items-center">
-        <div class="card p-4 border-primary rounded shadow profile-card" style="width: 400px; ">
-            <h4 style="margin-left: 30%; margin-bottom: 12px; font-size: 30px; font-weight: bold; background: linear-gradient(130deg, rgb(40, 42, 95), rgb(99, 99, 143), rgb(24, 25, 57)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
-                My Profile
-            </h4><br>
-            <p><span style="font-weight: bold;">Name: </span> {{ profile.user.username |title }}</p>
-            <p><span style="font-weight: bold;">Email: </span> {{ profile.user.email }}</p>
-            <p><span style="font-weight: bold;">Phone: </span>{{ profile.phone }}</p>
-            <p><span style="font-weight: bold;">Address: </span>{{ profile.address }}</p>
-            <p><span style="font-weight: bold;">Amount: </span>{{ profile.amount }}</p>
-            <a href="{% url 'User:profile_update' %}" class="btn btn-primary update-button" style="margin-left: 30%;">Update</a>
+                      <div class="row pt-1">
+                        <div class="col-6 mb-3">
+                            <a href="{% url 'User:profile_update' %}" class="btn btn-primary btn-icon">
+                                <i class="far fa-edit"></i> Update Profile
+                            </a>
+                        </div>
+                        {% if user.profile.is_premium %}                    
+                            <div class="col-6 mb-3">
+                                {%if profile.profile_picture%}
+                                <a href="{% url 'User:upload_profile_pic' %}" class="btn btn-primary btn-icon">
+                                    <i class="fas fa-upload"></i> Update Picture
+                                </a>
+                                {%else%}
+                                <a href="{% url 'User:upload_profile_pic' %}" class="btn btn-primary btn-icon">
+                                    <i class="fas fa-upload"></i> Upload Picture
+                                </a>
+                                {%endif%}
+                            </div>
+                        {% endif %}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-    </div><br>
-    {% else %}
-    <div class="container d-flex justify-content-center align-items-center">
-        <div class="card p-4 border-primary rounded shadow" style="background-color: #001f3f; width: 350px; ">
-            <h2 class="card-title text-light mb-4">Welcome to Auction House</h2>
-            <p>Please register first</p>
-        </div>
-    </div>
-    {% endif %}
+      </section>
+      <style>
+        .gradient-custom {
+background: linear-gradient(to right bottom, rgba(246, 211, 101, 1), rgba(253, 160, 133, 1))
+}
+      </style>
 {% endblock %}
