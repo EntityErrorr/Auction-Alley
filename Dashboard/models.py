@@ -68,11 +68,11 @@ class Comment(models.Model):
 
 # define the model of a watchlist
 class Watchlist(models.Model):
-    auctions = models.ManyToManyField(Auction, related_name="auctions_in_watchlist", blank=True)
+    auctions = models.ManyToManyField('Auction', related_name="auctions_in_watchlist", blank=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="watchlist")
 
     def __str__(self):
-        return f"{self.user}'s watchlist"
+        return f"{self.user.username}'s watchlist"
     
 
 #define the model of advisor
