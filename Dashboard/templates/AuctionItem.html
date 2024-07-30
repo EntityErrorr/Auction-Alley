@@ -35,22 +35,22 @@
                             {% if not auction.closed  %}
                         <div class="container" id="button_group">
                             <div class="row">
-                                <!-- <div class="col-4">
-                                    Watchlist button
+                                <div class="col-4">
+                                    <!--Watchlist button -->
                                     {% if user.is_authenticated %}
                                         {% if not watching %}
-                                        <form action="#" method="post">
+                                        <form action="{% url 'dashboard:add_to_watchlist' auction.id %}" method="post">
                                             {% csrf_token %} 
-                                            <button type="submit" id="watchlist_button" class="btn btn-outline-primary" style="width: 150px">Add to Watchlist</button>
+                                            <button type="submit" id="watchlist_button" class="btn btn-outline-primary" style="width: 150px">Add to Wishlist</button>
                                         </form>
                                         {% else %}
-                                        <form action="#" method="post">
+                                        <form action="{% url 'dashboard:remove_from_watchlist' auction.id %}" method="post">
                                             {% csrf_token %} 
-                                            <button type="submit" id="watchlist_button2" class="btn btn-outline-primary" style="width: 200px">Remove from Watchlist</button>
+                                            <button type="submit" id="watchlist_button2" class="btn btn-outline-primary" style="width: 200px">Remove from Wishlist</button>
                                         </form>
                                         {% endif %}
                                     {% endif %}
-                                </div> -->
+                                </div>
                             </div> 
                         </div>
 

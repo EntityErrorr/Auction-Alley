@@ -448,6 +448,7 @@ def seller_profile(request, seller_id):
 
 
 
+<<<<<<< Updated upstream
 
 def winner_bid_profile(request):
     user = request.user
@@ -519,3 +520,44 @@ def purchase_process(request, auction_id):
 
 
 
+=======
+# code 
+
+
+
+# dashboard/views.py
+
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from .models import Watchlist, Auction
+
+# dashboard/views.py
+
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from .models import Auction, Watchlist
+
+@login_required
+def add_to_watchlist(request, auction_id):
+    auction = get_object_or_404(Auction, id=auction_id)
+    watchlist, created = Watchlist.objects.get_or_create(user=request.user)
+    if auction not in watchlist.auctions.all():
+        watchlist.auctions.add(auction)
+    return redirect('dashboard:AuctionItem', auction_id=auction.id)
+
+@login_required
+def remove_from_watchlist(request, auction_id):
+    auction = get_object_or_404(Auction, id=auction_id)
+    watchlist = Watchlist.objects.get(user=request.user)
+    if auction in watchlist.auctions.all():
+        watchlist.auctions.remove(auction)
+    return redirect('dashboard:AuctionItem', auction_id=auction.id)
+
+
+@login_required
+def view_watchlist(request):
+    # Ensure the Watchlist instance exists
+    watchlist, created = Watchlist.objects.get_or_create(user=request.user)
+    return render(request, 'watchlist.html', {'watchlist': watchlist})
+>>>>>>> Stashed changes

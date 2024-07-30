@@ -1,0 +1,10 @@
+
+
+
+{% if user.is_authenticated %}
+    {% if auction in user.watchlist.auctions.all %}
+        <a href="{% url 'remove_from_watchlist' auction.id %}" class="btn btn-danger">Remove from Wishlist</a>
+    {% else %}
+        <a href="{% url 'add_to_watchlist' auction.id %}" class="btn btn-primary">Add to Wishlist</a>
+    {% endif %}
+{% endif %}

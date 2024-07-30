@@ -81,9 +81,14 @@
                         <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="{% url 'User:profile_view' %}">View Profile</a></li>
                         <li><a class="dropdown-item" href="{% url 'User:change_password' %}">Change Password</a></li>
+<<<<<<< Updated upstream
                         <li><a class="dropdown-item" href="{% url 'User:deposite' %}">Deposite Amount</a></li>
                         <li><a class="dropdown-item" href="#">Wishlist</a></li>
                         <li><a class="dropdown-item" href="{% url 'dashboard:winner_bid_profile' %}">Winning bids</a></li>
+=======
+                        <li><a class="dropdown-item" href="{% url 'dashboard:view_watchlist' %}">Wishlist</a></li>
+                        <li><a class="dropdown-item" href="#">Winning bids</a></li>
+>>>>>>> Stashed changes
                         <li><a class="dropdown-item" href="{% url 'User:user_logout' %}">Logout</a></li>
                         </ul>
                     </li>
@@ -298,6 +303,73 @@
 </head>
 <body class="background-image">
     
+</body>
+</html>
+
+
+
+<!-- css style for change_password -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+<style>
+.change-password-container {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.change-password-container .title {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 24px;
+  color: #333;
+}
+
+.change-password-form .form-group {
+  margin-bottom: 15px;
+}
+
+.change-password-form .form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #555;
+}
+
+.change-password-form .form-group input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.change-password-form .btn {
+  width: 100%;
+  padding: 10px;
+  background-color: #007bff;
+  border: none;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.change-password-form .btn:hover {
+  background-color: #0056b3;
+}
+
+
+</style>
+</head>
+<body>
+   
 </body>
 </html>
 
