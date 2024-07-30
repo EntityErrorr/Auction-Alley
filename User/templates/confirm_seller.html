@@ -1,0 +1,107 @@
+{% extends "basee.html" %}
+
+{% block content %}
+    <div class="container my-5 p-3">
+        <div class="row justify-content-center p-3">
+            <div class="col-md-8 p-2">
+                <div class="card seller-confirmation-card d-flex align-items-center">
+                    <div class="card-header seller-header mt-3">
+                        <h3 class="mb-0">Become a Seller</h3>
+                    </div>
+                    <div class="card-body seller-content text-center">
+                        <p>
+                            By becoming a seller on our platform, you agree to the following terms:
+                        </p>
+                        <ul class="terms-list">
+                            <li>Our site will take a <span class="highlight">2% commission</span> from the sale price of each property.</li>
+                            <li>After the winner pays the price, you must submit the <span class="highlight">house papers</span> to us before receiving your payment.</li>
+                            <li>Ensure that all property listings comply with our guidelines.</li>
+                        </ul>
+                        <p>
+                            Confirming will activate your seller status and allow you to manage your property listings.
+                        </p>
+
+                        <form method="post" action="{% url 'User:confirm_seller_request' %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-primary my-3">
+                                <span class="ps-3">Confirm & Become a Seller &nbsp;&nbsp;</span>
+                                <span class="fas fa-check-circle"></span>
+                            </button>
+                        </form>
+
+                        <div class="button-wrapper mt-2">
+                            <a href="{% url 'User:profile_view' %}" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .seller-confirmation-card {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: .25rem;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            height: auto;
+            max-height: 600px; 
+            display: flex;
+            flex-direction: column;
+            justify-content: center; 
+        }
+        .seller-header {
+            background-color: #007bff;
+            color: white;
+            padding: 10px;
+            border-radius: .25rem .25rem 0 0;
+        }
+        .seller-content {
+            padding: 20px;
+        }
+        .terms-list {
+            list-style-type: none;
+            padding: 0;
+            margin: 20px 0;
+        }
+        .terms-list li {
+            margin: 10px 0;
+            font-size: 1rem;
+        }
+        .highlight {
+            color: #007bff;
+            font-weight: bold;
+        }
+        .btn-primary {
+            background-image: linear-gradient(to right, #f9d71c, #f4c542);
+            border: none;
+            transition: background-position 0.5s, color 0.5s;
+            background-size: 200% auto;
+            color: white;
+            font-size: 1rem; 
+            text-align: center; 
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .btn-primary:hover {
+            background-position: right center;
+            color: #fff;
+            text-decoration: none;
+        }
+        .btn-primary:hover .fas.fa-check-circle {
+            transform: translate(10px);
+            transition: transform 0.2s ease-in;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+            border: none;
+        }
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+        .button-wrapper {
+            display: flex;
+            justify-content: center;
+        }
+    </style>
+{% endblock content %}

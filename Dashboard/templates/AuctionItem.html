@@ -21,11 +21,12 @@
                     {% endif %}
 
                     <p class="card-text "> <span class="fw-semibold">Description: </span>{{ auction.description }}</p>
+                    <p class="card-text "><span class="fw-semibold">Address: </span>{{ auction.address }}</p>
                     <p class="card-text "><span class="fw-semibold">Category: </span>{{ auction.category }}</p>
                     <p class="card-text mb-4"><span class="fw-semibold">Size: </span>{{ auction.house_size }} sq ft.</p>
                     <h3 class="mb-2"><span><strong style="font-size: 23px">Starting Bid:</strong></span><strong style="font-size: 18px"><p>BDT {{ auction.starting_bid }}</p></strong></h3>
                     <h3 class="mb-2"><span><strong style="font-size: 23px">Current Bid:</strong></span><strong style="font-size: 18px"><p>BDT {{ auction.current_bid }}</p></strong></h3>
-                    <p class="card-text "><span class="fw-semibold">Seller: </span>{{ auction.seller.username }}</p>
+                    <p class="card-text "><span class="fw-semibold">Seller: </span><a class="link-primary link-offset-2" href="{% url 'User:seller_profile_view' auction.seller.id %}">{{ auction.seller.profile.user.username }}</a></p>
                     <p><small>Created on: {{ auction.creation_date }}</small></p>
                     <p><small>Updated on: {{ auction.update_date }}</small></p>
                     <span class="form-text text-muted">{{ bid_Num }} Bid(s) so far.</span> <br>

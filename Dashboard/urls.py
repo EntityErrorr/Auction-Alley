@@ -8,6 +8,7 @@ urlpatterns = [
     path("AuctionItem/<int:auction_id>/comment", views.comment, name="comment"),
     path('create_auction/', views.create_auction, name='create_auction'),
     path("Live_Auction/", views.LiveAuction, name="LiveAuction"),
+    path("Upcoming_Auction/", views.UpcomingAuction, name="UpcomingAuction"),
     path("Admin_approve/", views.adminapprove, name="adminapprove"),
     path("Manage_Slots/", views.Manageslot, name="manageslot"),
     path("Create_Slots/", views.Createslot, name="createslot"),
@@ -23,7 +24,6 @@ urlpatterns = [
     path('refund/', views.refund_request, name='refund'),
     path('end_auction/<int:auction_id>/', views.end_auction, name='end_auction'),
     path('past-auctions/', views.past_auctions, name='past_auctions'),
-    path('seller/<int:seller_id>/', views.seller_profile, name='seller_profile'),
 ]
 
 

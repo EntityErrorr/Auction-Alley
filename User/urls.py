@@ -15,6 +15,7 @@ urlpatterns = [
     path('logout/', views.user_logout, name='user_logout'),
     path("aboutus/",views.aboutUs,name="aboutus"),
     path('profile_view/', views.profile_view, name="profile_view"),
+    path('seller_profile_view/<int:id>/', views.seller_profile_view, name="seller_profile_view"),
     path('profile_update/', views.profile_update, name="profile_update"),
     path('profile_update_page/', views.profile_update_page, name="profile_update_page"),
     path('update-profile-pic/', views.upload_profile_pic, name='upload_profile_pic'),
@@ -28,4 +29,5 @@ urlpatterns = [
     path('deposite/', views.deposite, name="deposite"),
     path('get-membership/', views.membership, name="membership"),
     path('confirm-membership/', views.confirm_membership, name='confirm_membership'),
+    path('confirm-seller/', views.confirm_seller_request, name='confirm_seller_request'),
 ]

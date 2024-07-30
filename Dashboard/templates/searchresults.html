@@ -12,8 +12,9 @@
             <h3 class="card-title fs-1"><strong>{{ auction.title }}</strong></h3>
           <p class="card-text">{{ auction.description }}</p>
           <p class="card-text"><span class="fw-semibold">Category: </span>{{ auction.category }}</p>
+          <p class="card-text"><span class="fw-semibold">Address: </span>{{ auction.address }}</p>
           <p class="card-text"><span class="fw-semibold">Size: </span>{{ auction.house_size }} sqft.</p>
-          <p><small>Created on: {{ auction.creation_date }}</small></p>
+          <p><small>Auction on: {{ auction.creation_date }}</small></p>
           <a href="{% url 'dashboard:AuctionItem' auction.id %}" class="btn btn-primary my-3">View Details</a>
         </div>
       </div>

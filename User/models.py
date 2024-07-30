@@ -7,8 +7,6 @@ class Profile(models.Model):
     user = models.OneToOneField(User, primary_key=True, on_delete=models.CASCADE)
     phone = models.CharField(max_length=11)
     address = models.CharField(max_length=100)
-    ratings_sum = models.IntegerField(default=0)
-    ratings_count = models.IntegerField(default=0)
     birth_date = models.DateField(null=True, blank=True)
     amount = models.IntegerField(default=0, null=True, blank=True)
     
@@ -19,6 +17,9 @@ class Profile(models.Model):
     
     # Profile picture field (only for premium members)
     profile_picture = models.ImageField(upload_to='images/profile_pictures/', null=True, blank=True)
+
+    # Seller status
+    is_seller = models.BooleanField(default=False)
 
     def __str__(self):
         return self.user.username
@@ -39,3 +40,23 @@ class Profile(models.Model):
         if not self.is_premium:
             self.profile_picture = None
         super().save(*args, **kwargs)
+
+
+class Seller(models.Model):
+    profile = models.OneToOneField(Profile, on_delete=models.CASCADE)
+    rating_sum = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    total_ratings = models.PositiveIntegerField(default=0)
+    total_properties = models.PositiveIntegerField(default=0)
+    average_rating = models.DecimalField(max_digits=2, decimal_places=1, default=0.0)
+
+    def update_rating(self, new_rating):
+        if 1 <= new_rating <= 5:
+            self.rating_sum += new_rating
+            self.total_ratings += 1
+            self.average_rating = self.rating_sum / self.total_ratings
+            self.save()
+        else:
+            raise ValueError("Rating must be between 1 and 5.")
+
+    def __str__(self):
+        return f"Seller Profile for {self.profile.user.username}"

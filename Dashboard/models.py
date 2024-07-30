@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+from User.models import Seller
 
 # define the models of category
 class Category(models.Model):
@@ -18,8 +19,8 @@ class Auction(models.Model):
     current_bid = models.IntegerField(default=0)
     current_bid_by = models.ForeignKey(User, on_delete=models.CASCADE,null=True, blank=True, related_name='bids_made')
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="auction_category", blank=True, null=True) 
-    seller = models.ForeignKey(User, on_delete=models.CASCADE, related_name="auction_seller")
-    creation_date = models.DateTimeField(auto_now_add=True)
+    seller = models.ForeignKey(Seller, on_delete=models.CASCADE, related_name="auction_seller")
+    creation_date = models.DateTimeField(blank=True, null=True)
     end_time = models.DateTimeField(blank=True, null=True)
     house_size = models.IntegerField(null=True, blank=True)
     image = models.ImageField(upload_to='images/auction_item_images/')
@@ -111,14 +112,3 @@ class RefundRequest(models.Model):
     def __str__(self):
         return self.reason  
     
-from django.db import models
-from django.contrib.auth.models import User
-
-class Buyer_Seller(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    phone = models.CharField(max_length=15, blank=True, null=True)
-    address = models.TextField(blank=True, null=True)
-    # Other fields
-
-    def __str__(self):
-        return self.user.username

@@ -284,3 +284,28 @@ def confirm_membership(request):
 
 def membership(request):
     return render(request,"membership.html")
+
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from .models import Profile, Seller
+
+@login_required
+def confirm_seller_request(request):
+    if request.method == 'POST':
+        profile = Profile.objects.get(user=request.user)
+        
+        # Check if the user is already a seller
+        if not hasattr(profile, 'seller'):
+            Seller.objects.create(profile=profile)
+        
+        profile.is_seller = True
+        profile.save()
+        return redirect('User:profile_view') 
+    
+    return render(request, 'confirm_seller.html')
+
+def seller_profile_view(request,id):
+    seller=Seller.objects.get(pk=id)
+    print(seller)
+    return render(request,'seller_profile.html',{'seller': seller})

@@ -27,6 +27,10 @@
       rel="stylesheet"
     />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+  <!-- Flatpickr CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+
 
   {% load static %}
   <link rel="stylesheet" href="{% static 'base.css' %}">
@@ -80,6 +84,11 @@
                         </a>
                         <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="{% url 'User:profile_view' %}">View Profile</a></li>
+                        {% if user.profile.is_seller %}
+                            <li>
+                                <a class="dropdown-item" href="{% url 'User:seller_profile_view' user.profile.seller.id %}">Seller Profile</a>
+                            </li>
+                        {% endif %}
                         <li><a class="dropdown-item" href="{% url 'User:change_password' %}">Change Password</a></li>
                         <li><a class="dropdown-item" href="{% url 'User:deposite' %}">Deposite Amount</a></li>
                         <li><a class="dropdown-item" href="#">Wishlist</a></li>
@@ -93,6 +102,7 @@
                             Auction
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="auctionDropdown">
+                            <li><a class="dropdown-item" href="{% url 'dashboard:UpcomingAuction' %}">Upcoming Bidding</a></li>
                             <li><a class="dropdown-item" href="{% url 'dashboard:LiveAuction' %}">Live Bidding</a></li>
                             <li><a class="dropdown-item" href="{% url 'dashboard:past_auctions' %}">Past Biddings</a></li>
                         </ul>
@@ -100,9 +110,18 @@
                     <li class="nav-item">
                         <a class="nav-link " href="{% url 'dashboard:advisors' %}">Financial Advice</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link " href="{% url 'dashboard:create_auction' %}">Sell House</a>
+
+                    <!-- Seller  -->
+                    {% if not user.profile.is_seller %}
+                      <li class="nav-item">
+                        <a class="nav-link " href="{% url 'User:confirm_seller_request' %}">Become Seller</a>
                     </li>
+                    {% else %}
+                      <li class="nav-item">
+                        <a class="nav-link " href="{% url 'dashboard:create_auction' %}">Sell House</a>
+                      </li>
+                    {% endif %}
+
                     <li class="nav-item">
                         <a class="nav-link " href="{% url 'dashboard:refund' %}">Refund</a>
                     </li>
@@ -116,7 +135,6 @@
                         <a class="nav-link" href="{% url 'User:membership' %}">Get Membership</a>
                     </li>
                     {% else %}
-                        <!-- Display "Premium" with golden styling if a premium member -->
                         <li class="nav-item">
                             <a class="nav-link disabled" style="color: gold;" href="#">Premium <i class="fas fa-crown"></i></a>
                           
@@ -232,73 +250,35 @@
           </div>
         </div>
     </footer>
+
+    <!-- Flatpickr JS -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+      flatpickr('input[type="datetime-local"]', {
+          enableTime: true,
+          dateFormat: "Y-m-d H:i",
+      });
+  });
+  </script>
+  
 </body>
 
-
-<!-- css style for search_auctions -->
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    
+<html>
+  <body>
     <style>
-        
-        .search-form {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-top: 20px;
-        }
+      /* Background image style */
+      .background-image {
+          background-image: url('https://media.istockphoto.com/id/486232168/photo/real-estate.jpg?s=612x612&w=0&k=20&c=IYEE_YXByOC6-gKPuX5HxaiLJi1RehrC3i0wdJ9799Y=');
+          background-size: cover;
+          background-position: center;
+          min-height: 100vh;
+          background-attachment: fixed;
+      }
 
-        .search-form input {
-            padding: 10px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            flex: 1;
-            margin-right: 10px;
-        }
-
-        .search-form button {
-            padding: 10px 20px;
-            border-radius: 5px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-        }
-
-        .search-form button:hover {
-            background-color: #0056b3;
-        }
-    </style>
-</head>
-<body>
-   
-</body>
-</html>
-
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Base Template</title>
-    <style>
-        /* Background image style */
-        .background-image {
-            background-image: url('https://media.istockphoto.com/id/486232168/photo/real-estate.jpg?s=612x612&w=0&k=20&c=IYEE_YXByOC6-gKPuX5HxaiLJi1RehrC3i0wdJ9799Y=');
-            background-size: cover;
-            background-position: center;
-            min-height: 100vh;
-            background-attachment: fixed;
-        }
-
-        
-    </style>
-</head>
-<body class="background-image">
-    
-</body>
+      
+  </style>
+  </body>
 </html>
 
 

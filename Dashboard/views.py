@@ -67,8 +67,15 @@ def LiveAuction(request):
     live_auctions = Auction.objects.filter(
         approval_status='approved',
         end_time__gt=timezone.now()
-    ).order_by('-creation_date')
+    ).exclude(creation_date__gt=timezone.now()).order_by('-creation_date')
     return render(request, "searchresults.html", {"auctions": live_auctions, 'name':'Live Auction'})
+
+def UpcomingAuction(request):
+    live_auctions = Auction.objects.filter(
+        approval_status='approved',
+        creation_date__gt=timezone.now()
+    ).order_by('-creation_date')
+    return render(request, "searchresults.html", {"auctions": live_auctions, 'name':'Upcoming Auction'})
 
 
 from decimal import Decimal, InvalidOperation
@@ -242,6 +249,10 @@ def adminapprove(request):
         action,data=action_value.split('|')
         preauction= Auction.objects.get(pk=data)
         preauction.approval_status=action
+        seller=preauction.seller
+        if action == 'approved':
+            seller.total_properties+=1
+            seller.save()
         preauction.save()
     return render(request,'adminapprove.html',{'pending':pending_auction})
 
@@ -380,9 +391,9 @@ def create_auction(request):
         if form.is_valid():
             print(request.FILES)
             auction_item = form.save(commit=False)
-            auction_item.seller = request.user
+            seller=request.user.profile.seller
+            auction_item.seller = seller 
             auction_item.approval_status = 'pending'
-            print('hih')
             auction_item.save()
             return redirect('User:home')
     else:
@@ -409,7 +420,7 @@ def send_winner_notification(winner, auction):
     send_mail(subject, message, from_email, recipient_list)
 
 from django.shortcuts import render, get_object_or_404
-from .models import Auction, Buyer_Seller
+from .models import Auction
 
 from django.core.mail import send_mail
 from django.utils import timezone
@@ -441,10 +452,3 @@ def past_auctions(request):
     return render(request, 'past_auctions.html', context)
 
 
-def seller_profile(request, seller_id):
-    seller = get_object_or_404(Buyer_Seller, user_id=seller_id)
-    return render(request, 'seller_profile.html', {'seller': seller})
-
-
-
-  
