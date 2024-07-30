@@ -1,0 +1,30 @@
+{% extends 'basee.html' %}
+
+{% block title %}Purchase Successful{% endblock %}
+
+{% block content %}
+<style>
+    .container {
+        margin-top: 50px;
+        text-align: center;
+    }
+    .message {
+        font-size: 24px;
+        font-weight: bold;
+        color: #28a745;
+    }
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+    .btn-primary:hover {
+        background-color: #0056b3;
+        border-color: #004085;
+    }
+</style>
+
+<div class="container">
+    <div class="message">Your purchase has been completed successfully!</div>
+    <a href="{% url 'dashboard:auction_list' %}" class="btn btn-primary mt-4">Back to Auctions</a>
+</div>
+{% endblock %}

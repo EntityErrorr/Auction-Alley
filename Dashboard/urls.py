@@ -24,6 +24,11 @@ urlpatterns = [
     path('refund/', views.refund_request, name='refund'),
     path('end_auction/<int:auction_id>/', views.end_auction, name='end_auction'),
     path('past-auctions/', views.past_auctions, name='past_auctions'),
+    path('winner-bid-profile/', views.winner_bid_profile, name='winner_bid_profile'),
+    path('purchase/<int:auction_id>/', views.purchase_process, name='purchase_process'),
+    path('watchlist/add/<int:auction_id>/', views.add_to_watchlist, name='add_to_watchlist'),
+    path('watchlist/remove/<int:auction_id>/', views.remove_from_watchlist, name='remove_from_watchlist'),
+    path('watchlist/', views.view_watchlist, name='view_watchlist'),
 ]
 
 

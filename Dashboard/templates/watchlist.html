@@ -1,0 +1,33 @@
+
+
+{% extends "basee.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<h2 style="font-size: 2em; margin-bottom: 20px;">My Watchlist</h2>
+<table style="width: 100%; margin: 20px 0; border-collapse: collapse;">
+    <thead>
+        <tr style="background-color: #f4f4f4; font-weight: bold;">
+            <th style="padding: 12px; text-align: left; border-bottom: 1px solid #ddd;">Auction</th>
+            <th style="padding: 12px; text-align: left; border-bottom: 1px solid #ddd;">Added On</th>
+            <th style="padding: 12px; text-align: left; border-bottom: 1px solid #ddd;">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for auction in watchlist.auctions.all %}
+        <tr style="border-bottom: 1px solid #ddd;">
+            <td style="padding: 12px; text-align: left;">{{ auction.title }}</td>
+            <td style="padding: 12px; text-align: left;">{{ auction.creation_date }}</td>
+            <td style="padding: 12px; text-align: left;">
+                <a href="{% url 'dashboard:remove_from_watchlist' auction.id %}" 
+                   style="display: inline-block; padding: 8px 16px; margin: 5px; text-align: center; border-radius: 4px; text-decoration: none; color: #fff; font-size: 14px; background-color: #dc3545; border: none; transition: background-color 0.3s ease;" 
+                   onmouseover="this.style.backgroundColor='#c82333';" 
+                   onmouseout="this.style.backgroundColor='#dc3545';">
+                   Remove
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
