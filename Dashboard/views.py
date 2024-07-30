@@ -448,7 +448,6 @@ def seller_profile(request, seller_id):
 
 
 
-<<<<<<< Updated upstream
 
 def winner_bid_profile(request):
     user = request.user
@@ -520,7 +519,6 @@ def purchase_process(request, auction_id):
 
 
 
-=======
 # code 
 
 
@@ -560,4 +558,3 @@ def view_watchlist(request):
     # Ensure the Watchlist instance exists
     watchlist, created = Watchlist.objects.get_or_create(user=request.user)
     return render(request, 'watchlist.html', {'watchlist': watchlist})
->>>>>>> Stashed changes
