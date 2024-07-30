@@ -71,7 +71,7 @@
 </style>
 
 <div class="container my-5">
-    <div class="middle-title">Congratulation!</div>
+    <div class="middle-title">Congratulations!</div>
     <div class="card-deck">
         <!-- Auctions Won by the Logged-in User -->
         {% for auction in past_auctions %}
@@ -89,7 +89,9 @@
                 </p>
             </div>
             <div class="card-footer">
+                {% if current_user == auction.winner %}
                 <a href="{% url 'dashboard:purchase_process' auction.id %}" class="btn btn-primary">Apply for Purchase</a>
+                {% endif %}
             </div>
         </div>
         {% endfor %}

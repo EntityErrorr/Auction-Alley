@@ -1,33 +1,102 @@
+{% extends 'basee.html' %}
 
-
-{% extends "basee.html" %}
-{% load crispy_forms_tags %}
+{% block title %}Winner Profile{% endblock %}
 
 {% block content %}
-<h2 style="font-size: 2em; margin-bottom: 20px;">My Watchlist</h2>
-<table style="width: 100%; margin: 20px 0; border-collapse: collapse;">
-    <thead>
-        <tr style="background-color: #f4f4f4; font-weight: bold;">
-            <th style="padding: 12px; text-align: left; border-bottom: 1px solid #ddd;">Auction</th>
-            <th style="padding: 12px; text-align: left; border-bottom: 1px solid #ddd;">Added On</th>
-            <th style="padding: 12px; text-align: left; border-bottom: 1px solid #ddd;">Action</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for auction in watchlist.auctions.all %}
-        <tr style="border-bottom: 1px solid #ddd;">
-            <td style="padding: 12px; text-align: left;">{{ auction.title }}</td>
-            <td style="padding: 12px; text-align: left;">{{ auction.creation_date }}</td>
-            <td style="padding: 12px; text-align: left;">
-                <a href="{% url 'dashboard:remove_from_watchlist' auction.id %}" 
-                   style="display: inline-block; padding: 8px 16px; margin: 5px; text-align: center; border-radius: 4px; text-decoration: none; color: #fff; font-size: 14px; background-color: #dc3545; border: none; transition: background-color 0.3s ease;" 
-                   onmouseover="this.style.backgroundColor='#c82333';" 
-                   onmouseout="this.style.backgroundColor='#dc3545';">
-                   Remove
-                </a>
-            </td>
-        </tr>
+<style>
+    .container {
+        margin-top: 50px;
+    }
+    .card-deck {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 20px;
+    }
+    .card {
+        flex: 0 1 30%;
+        border: none;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .card img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+    }
+    .card-body {
+        padding: 20px;
+        background-color: #fff;
+    }
+    .card-title {
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 15px;
+        text-align: center;
+    }
+    .card-text {
+        font-size: 18px;
+        margin-bottom: 10px;
+        text-align: center;
+    }
+    .card-footer {
+        text-align: center;
+        background-color: transparent;
+        border: none;
+        padding: 10px;
+    }
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+    .btn-primary:hover {
+        background-color: #0056b3;
+        border-color: #004085;
+    }
+    .middle-title {
+        text-align: center;
+        font-size: 28px;
+        font-weight: bold;
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+    .winner-name {
+        font-size: 30px;
+        font-weight: bold;
+        color: #28a745;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+</style>
+
+<div class="container my-5">
+    <div class="middle-title">Congratulations!</div>
+    <div class="card-deck">
+        <!-- Auctions Won by the Logged-in User -->
+        {% for auction in past_auctions %}
+        <div class="card">
+            {% if auction.image %}
+            <img src="{{ auction.image.url }}" alt="{{ auction.title }} Image" class="card-img-top">
+            {% endif %}
+            <div class="card-body">
+                <h3 class="card-title">{{ auction.title }}</h3>
+                <p class="card-text">
+                    <strong>Winner:</strong> {{ auction.winner.username }}
+                </p>
+                <p class="card-text font-weight-bold text-primary">
+                    Winning Amount: ${{ auction.current_bid }}
+                </p>
+            </div>
+            <div class="card-footer">
+                {% if current_user == auction.winner %}
+                <a href="{% url 'dashboard:purchase_process' auction.id %}" class="btn btn-primary">Apply for Purchase</a>
+                {% else %}
+                <span class="text-muted">You are not authorized to purchase this property.</span>
+                {% endif %}
+            </div>
+        </div>
         {% endfor %}
-    </tbody>
-</table>
+    </div>
+</div>
 {% endblock %}

@@ -3,85 +3,32 @@
 {% block title %}Purchase Process{% endblock %}
 
 {% block content %}
-<style>
-    .container {
-        margin-top: 50px;
-    }
-    .card {
-        max-width: 500px;
-        margin: auto;
-        padding: 20px;
-        border: none;
-        border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-    .card-body {
-        padding: 20px;
-        background-color: #fff;
-    }
-    .card-title {
-        font-size: 24px;
-        font-weight: bold;
-        margin-bottom: 15px;
-        text-align: center;
-    }
-    .card-text {
-        font-size: 18px;
-        margin-bottom: 10px;
-        text-align: center;
-    }
-    .btn-primary {
-        background-color: #007bff;
-        border-color: #007bff;
-    }
-    .btn-primary:hover {
-        background-color: #0056b3;
-        border-color: #004085;
-    }
-    .middle-title {
-        text-align: center;
-        font-size: 28px;
-        font-weight: bold;
-        margin-top: 20px;
-        margin-bottom: 20px;
-    }
-    .success-message {
-        font-size: 24px;
-        font-weight: bold;
-        color: #28a745;
-        text-align: center;
-        margin-bottom: 20px;
-    }
-    .btn-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin-top: 20px;
-    }
-</style>
-
-<div class="container">
-    <div class="middle-title">Purchase Confirmation</div>
+<div class="container my-5">
+    <h1 class="text-center">Purchase Process for {{ auction.title }}</h1>
+    
     {% if purchase_success %}
-    <div class="success-message">Your purchase has been completed successfully!</div>
-    {% else %}
-    <div class="card">
-        <div class="card-body">
-            <h3 class="card-title">{{ auction.title }}</h3>
-            <p class="card-text">
-                <strong>Winning Amount:</strong> ${{ auction.current_bid }}
-            </p>
-            <p class="card-text">
-                You will have to pay the amount above to complete the purchase.
-            </p>
-            <div class="btn-container">
-                <form method="post">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-primary">Confirm Purchase</button>
-                </form>
-            </div>
+        <div class="alert alert-success" role="alert">
+            Your purchase has been processed successfully. Check your email for confirmation.
         </div>
-    </div>
+    {% else %}
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="confirm">Confirm Purchase</label>
+                <button type="submit" class="btn btn-primary">Confirm</button>
+            </div>
+        </form>
     {% endif %}
+
+    <div class="mt-4">
+        <h2>Property Details</h2>
+        <p><strong>Title:</strong> {{ auction.title }}</p>
+        <p><strong>Description:</strong> {{ auction.description }}</p>
+        <p><strong>Category:</strong> {{ auction.category }}</p>
+        <p><strong>Address:</strong> {{ auction.address }}</p>
+        <p><strong>Size:</strong> {{ auction.house_size }} sqft.</p>
+        <p><strong>Winning Amount:</strong> ${{ auction.current_bid }}</p>
+        <p><strong>Seller:</strong> <a href="{% url 'User:seller_profile_view' auction.seller.id %}">{{ auction.seller.profile.user.username }}</a></p>
+    </div>
 </div>
 {% endblock %}

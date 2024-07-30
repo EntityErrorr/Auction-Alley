@@ -438,23 +438,30 @@ def send_winner_notification(winner, auction):
     recipient_list = [winner.email]
     send_mail(subject, message, from_email, recipient_list)
 
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
 from .models import Auction
 
-from django.core.mail import send_mail
-from django.utils import timezone
-from django.shortcuts import render
-from .models import Auction, Bid
-
-
+@login_required
 def winner_bid_profile(request):
-    user = request.user
-    # Fetch auctions where the logged-in user is the winner
-    auctions = Auction.objects.filter(winner=user)
-    return render(request, 'winner_bid_profile.html', {'past_auctions': auctions})
+    # Fetch all auctions where the current user is the winner
+    past_auctions = Auction.objects.filter(winner=request.user)
+    print(past_auctions)
+    context = {
+        'past_auctions': past_auctions,
+        'current_user': request.user
+    }
+    return render(request, 'winner_bid_profile.html', context)
 
 
 
+
+
+from django.shortcuts import render, get_object_or_404
+from django.core.mail import send_mail
+from django.conf import settings
+from django.contrib.auth.decorators import login_required
+from .models import Auction
 
 @login_required
 def purchase_process(request, auction_id):
@@ -484,10 +491,10 @@ def purchase_process(request, auction_id):
         print(f'Email sent successfully to the user {request.user.email}')
 
         # Notify the seller
-        if auction.seller:
+        if auction.seller and auction.seller.profile and auction.seller.profile.user:
             subject_seller = 'Your Property Has Been Purchased'
             message_seller = f'''
-            Dear {auction.seller.username},
+            Dear {auction.seller.profile.user.username},
 
             Congratulations!
 
@@ -502,10 +509,10 @@ def purchase_process(request, auction_id):
             Best regards,
             Auction Alley Team
             '''
-            recipient_list_seller = [auction.seller.email]
+            recipient_list_seller = [auction.seller.profile.user.email]
 
             send_mail(subject_seller, message_seller, from_email, recipient_list_seller)
-            print(f'Email sent successfully to the seller {auction.seller.email}')
+            print(f'Email sent successfully to the seller {auction.seller.profile.user.email}')
 
         purchase_success = True
 
@@ -513,7 +520,6 @@ def purchase_process(request, auction_id):
         'auction': auction,
         'purchase_success': purchase_success
     })
-
 
 
 
