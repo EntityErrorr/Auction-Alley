@@ -77,6 +77,25 @@ def UpcomingAuction(request):
     ).order_by('-creation_date')
     return render(request, "searchresults.html", {"auctions": live_auctions, 'name':'Upcoming Auction'})
 
+def past_auctions(request):
+    past_auctions = Auction.objects.filter(approval_status='approved',end_time__lt=timezone.now()).order_by('-creation_date')
+    
+    for auction in past_auctions:
+        if not auction.winner:
+            highest_bid = Bid.objects.filter(auction=auction).order_by('-bid_price').first()
+            if highest_bid:
+                auction.winner = highest_bid.bider
+                auction.current_bid = highest_bid.bid_price
+                auction.save()
+                # Send an automated winner notification
+                send_mail(
+                    'Congratulations! You Won the Auction',
+                    f'Dear {auction.winner.username},\n\nYou have won the auction for {auction.title} with a bid of ${auction.current_bid}.\n\nThank you for participating!',
+                    'no-reply@auctionwebsite.com',
+                    [auction.winner.email],
+                    fail_silently=False,
+                )
+    return render(request, 'searchresults.html', {"auctions": past_auctions, 'name':'Past Auction'})
 
 from decimal import Decimal, InvalidOperation
 from django.shortcuts import render, get_object_or_404
@@ -426,31 +445,6 @@ from django.core.mail import send_mail
 from django.utils import timezone
 from django.shortcuts import render
 from .models import Auction, Bid
-
-def past_auctions(request):
-    past_auctions = Auction.objects.filter(end_time__lt=timezone.now())
-    
-    for auction in past_auctions:
-        if not auction.winner:
-            highest_bid = Bid.objects.filter(auction=auction).order_by('-bid_price').first()
-            if highest_bid:
-                auction.winner = highest_bid.bider
-                auction.current_bid = highest_bid.bid_price
-                auction.save()
-                # Send an automated winner notification
-                send_mail(
-                    'Congratulations! You Won the Auction',
-                    f'Dear {auction.winner.username},\n\nYou have won the auction for {auction.title} with a bid of ${auction.current_bid}.\n\nThank you for participating!',
-                    'no-reply@auctionwebsite.com',
-                    [auction.winner.email],
-                    fail_silently=False,
-                )
-    
-    context = {
-        'past_auctions': past_auctions,
-    }
-    return render(request, 'past_auctions.html', context)
-
 
 
 def winner_bid_profile(request):

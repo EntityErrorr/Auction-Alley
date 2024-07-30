@@ -10,11 +10,26 @@
         <img src="{{ auction.image.url }}" class="card-img-top" alt="{{ auction.title }}">
         <div class="card-body">
             <h3 class="card-title fs-1"><strong>{{ auction.title }}</strong></h3>
-          <p class="card-text">{{ auction.description }}</p>
+          <p class="card-text">{{ auction.description |truncatewords:20 }}</p>
           <p class="card-text"><span class="fw-semibold">Category: </span>{{ auction.category }}</p>
           <p class="card-text"><span class="fw-semibold">Address: </span>{{ auction.address }}</p>
-          <p class="card-text"><span class="fw-semibold">Size: </span>{{ auction.house_size }} sqft.</p>
-          <p><small>Auction on: {{ auction.creation_date }}</small></p>
+          <p class="card-text mb-3"><span class="fw-semibold ">Size: </span>{{ auction.house_size }} sqft.</p>
+          {% if name == "Past Auction" %}
+            {% if auction.winner %}
+            <p class="card-text font-weight-bold text-primary mb-3">
+                Winner: {{ auction.winner.username }}<br>
+                Winning Amount: ${{ auction.current_bid }}
+            </p>
+            {% else %}
+            <p class="card-text font-weight-bold text-primary">
+                No Winner
+            </p>
+            {% endif %}
+            <p><small>Start Time: {{ auction.creation_date }}</small></p>
+            <p><small>End Time: {{ auction.end_time }}</small></p>
+          {% else %}
+            <p><small>Auction on: {{ auction.creation_date }}</small></p>
+          {% endif %}
           <a href="{% url 'dashboard:AuctionItem' auction.id %}" class="btn btn-primary my-3">View Details</a>
         </div>
       </div>

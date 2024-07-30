@@ -28,21 +28,15 @@
     />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
   <!-- Flatpickr CSS -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-
-
-
-  {% load static %}
-  <link rel="stylesheet" href="{% static 'base.css' %}">
-
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
   <title>Auction Alley</title>
 </head>
 
-<body>
-    
+
+<body class="background-image">
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container-fluid">
           <a class="navbar-brand" href="{% url 'User:home' %}">Auction Alley</a>
@@ -106,6 +100,7 @@
                             <li><a class="dropdown-item" href="{% url 'dashboard:UpcomingAuction' %}">Upcoming Bidding</a></li>
                             <li><a class="dropdown-item" href="{% url 'dashboard:LiveAuction' %}">Live Bidding</a></li>
                             <li><a class="dropdown-item" href="{% url 'dashboard:past_auctions' %}">Past Biddings</a></li>
+                            <li><a class="dropdown-item" href="#">Location Bid History</a></li>
                         </ul>
                     </li>
                     <li class="nav-item">
@@ -160,7 +155,7 @@
         {% block content %}
           <p>This is the base template content.</p>
         {% endblock %}
-      </div>
+    </div>
 
     <footer style="background-color: #001f3f;" class="text-white ">
         <div class="mx-auto py-8 px-8 flex flex-wrap justify-between items-start">
@@ -252,9 +247,10 @@
         </div>
     </footer>
 
+
     <!-- Flatpickr JS -->
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-<script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
   document.addEventListener('DOMContentLoaded', function() {
       flatpickr('input[type="datetime-local"]', {
           enableTime: true,
@@ -264,22 +260,6 @@
   </script>
   
 </body>
-
-<html>
-  <body>
-    <style>
-      /* Background image style */
-      .background-image {
-          background-image: url('https://media.istockphoto.com/id/486232168/photo/real-estate.jpg?s=612x612&w=0&k=20&c=IYEE_YXByOC6-gKPuX5HxaiLJi1RehrC3i0wdJ9799Y=');
-          background-size: cover;
-          background-position: center;
-          min-height: 100vh;
-          background-attachment: fixed;
-      }
-
-      
-  </style>
-  </body>
 </html>
 
 
@@ -291,6 +271,7 @@
 <head>
     
 <style>
+        
 .change-password-container {
   max-width: 400px;
   margin: 0 auto;
@@ -340,7 +321,14 @@
 .change-password-form .btn:hover {
   background-color: #0056b3;
 }
-
+  /* Background image style */
+.background-image {
+      background-image: url('https://media.istockphoto.com/id/486232168/photo/real-estate.jpg?s=612x612&w=0&k=20&c=IYEE_YXByOC6-gKPuX5HxaiLJi1RehrC3i0wdJ9799Y=');
+      background-size: cover;
+      background-position: center;
+      min-height: 100vh;
+      background-attachment: fixed;
+}
 
 </style>
 </head>

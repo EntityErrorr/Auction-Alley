@@ -272,8 +272,8 @@ def confirm_membership(request):
     if request.method == 'POST':
         user_profile = Profile.objects.get(user=request.user)
         
-        if user_profile.amount >= 5000:
-            user_profile.amount -= 5000
+        if user_profile.amount >= 10000:
+            user_profile.amount -= 10000
             user_profile.activate_membership()
             user_profile.save()
             return redirect('User:profile_view') 
