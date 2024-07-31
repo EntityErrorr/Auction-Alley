@@ -221,74 +221,82 @@
             return;
         }
 
-        if (bidPrice <= startingBid) {
+        if (bidPrice <= currentBid || bidPrice <= startingBid) {
             var notification = document.getElementById('notification');
-            notification.innerText = 'Your bid must be higher than the starting bid.';
+            notification.innerText = 'Your bid must be higher than the current bid and the starting bid.';
             notification.style.display = 'block';
             notification.style.color = 'red';
             return;
         }
 
-        var formData = new FormData(form);
-        var xhr = new XMLHttpRequest();
-        xhr.open('POST', form.action, true);
-        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-        xhr.onload = function() {
-            if (xhr.status === 200) {
-                var response = JSON.parse(xhr.responseText);
-                if (response.success) {
-                    var notification = document.getElementById('notification');
-                    notification.innerText = 'Bid placed successfully!';
-                    notification.style.display = 'block';
-                    notification.style.color = 'green';
-                    document.getElementById('current-bid').innerText = bidPrice.toFixed(2);
-                    var newBid = document.createElement('li');
-                    newBid.innerHTML = `<p><strong>${response.bider}</strong> placed a bid of $${bidPrice.toFixed(2)} on ${response.bid_date}</p>`;
-                    document.getElementById('bids-list').insertBefore(newBid, document.getElementById('bids-list').firstChild);
-                } else {
-                    var notification = document.getElementById('notification');
-                    notification.innerText = response.error;
-                    notification.style.display = 'block';
-                    notification.style.color = 'red';
-                }
+        var csrfToken = form.querySelector('[name="csrfmiddlewaretoken"]').value;
+        var formData = new FormData();
+        formData.append('bid_price', bidPrice);
+        formData.append('csrfmiddlewaretoken', csrfToken);
+
+        fetch(form.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            var notification = document.getElementById('notification');
+            notification.innerText = data.message;
+            notification.style.display = 'block';
+            if (data.success) {
+                notification.style.color = 'green';
+                document.getElementById('current-bid').innerText = bidPrice;
+                form.elements['bid_price'].value = '';
+                location.reload(); // Refresh the page after successful bid placement
             } else {
-                var notification = document.getElementById('notification');
-                notification.innerText = 'An error occurred. Please try again.';
-                notification.style.display = 'block';
                 notification.style.color = 'red';
             }
-        };
-        xhr.send(formData);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            var notification = document.getElementById('notification');
+            notification.innerText = 'An error occurred while placing your bid.';
+            notification.style.display = 'block';
+            notification.style.color = 'red';
+        });
     });
 
     document.getElementById('load-more').addEventListener('click', function() {
-        var offset = this.getAttribute('data-offset');
-        var limit = this.getAttribute('data-limit');
-        var hasNext = this.getAttribute('data-has-next');
+        var button = this;
+        var offset = parseInt(button.getAttribute('data-offset'));
+        var limit = parseInt(button.getAttribute('data-limit'));
+        var hasNext = button.getAttribute('data-has-next') === 'true';
 
-        if (hasNext === 'false') return;
+        if (!hasNext) {
+            return;
+        }
 
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', loadBidsUrl + '?offset=' + offset + '&limit=' + limit, true);
-        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-        xhr.onload = function() {
-            if (xhr.status === 200) {
-                var response = JSON.parse(xhr.responseText);
-                var bidsList = document.getElementById('bids-list');
-                response.bids.forEach(function(bid) {
-                    var newBid = document.createElement('li');
-                    newBid.innerHTML = `<p><strong>${bid.bider}</strong> placed a bid of $${bid.bid_price} on ${bid.bid_date}</p>`;
-                    bidsList.appendChild(newBid);
-                });
-                if (!response.has_next) {
-                    document.getElementById('load-more').setAttribute('data-has-next', 'false');
-                    document.getElementById('load-more').style.display = 'none';
-                } else {
-                    document.getElementById('load-more').setAttribute('data-offset', parseInt(offset) + parseInt(limit));
-                }
+        fetch(`${loadBidsUrl}?offset=${offset}&limit=${limit}`, {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
             }
-        };
-        xhr.send();
+        })
+        .then(response => response.json())
+        .then(data => {
+            var bidsList = document.getElementById('bids-list');
+            data.bids.forEach(bid => {
+                var listItem = document.createElement('li');
+                listItem.innerHTML = `<p><strong>${bid.bider.username}</strong> placed a bid of $${bid.bid_price} on ${bid.bid_date}</p>`;
+                bidsList.appendChild(listItem);
+            });
+            button.setAttribute('data-offset', offset + limit);
+            if (!data.has_next) {
+                button.style.display = 'none';
+                button.setAttribute('data-has-next', 'false');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
     });
 </script>
 {% endblock %}

@@ -444,14 +444,17 @@ from .models import Auction
 
 @login_required
 def winner_bid_profile(request):
-    # Fetch all auctions where the current user is the winner
-    past_auctions = Auction.objects.filter(winner=request.user)
-    print(past_auctions)
+    user = request.user
+    past_auctions = Auction.objects.filter(winner=user)
+    is_winner = past_auctions.exists()  # Check if the user is a winner of any auction
+
     context = {
         'past_auctions': past_auctions,
-        'current_user': request.user
+        'is_winner': is_winner,
+        'current_user': user,
     }
     return render(request, 'winner_bid_profile.html', context)
+
 
 
 

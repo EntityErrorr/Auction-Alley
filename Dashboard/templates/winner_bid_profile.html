@@ -68,33 +68,44 @@
         text-align: center;
         margin-bottom: 20px;
     }
+    .not-winner-message {
+        text-align: center;
+        font-size: 24px;
+        color: #dc3545;
+        font-weight: bold;
+        margin-top: 50px;
+    }
 </style>
 
 <div class="container my-5">
-    <div class="middle-title">Congratulations!</div>
-    <div class="card-deck">
-        <!-- Auctions Won by the Logged-in User -->
-        {% for auction in past_auctions %}
-        <div class="card">
-            {% if auction.image %}
-            <img src="{{ auction.image.url }}" alt="{{ auction.title }} Image" class="card-img-top">
-            {% endif %}
-            <div class="card-body">
-                <h3 class="card-title">{{ auction.title }}</h3>
-                <p class="card-text">
-                    <strong>Winner:</strong> {{ auction.winner.username }}
-                </p>
-                <p class="card-text font-weight-bold text-primary">
-                    Winning Amount: ${{ auction.current_bid }}
-                </p>
-            </div>
-            <div class="card-footer">
-                {% if current_user == auction.winner %}
-                <a href="{% url 'dashboard:purchase_process' auction.id %}" class="btn btn-primary">Apply for Purchase</a>
+    {% if is_winner %}
+        <div class="middle-title">Congratulations!</div>
+        <div class="card-deck">
+            <!-- Auctions Won by the Logged-in User -->
+            {% for auction in past_auctions %}
+            <div class="card">
+                {% if auction.image %}
+                <img src="{{ auction.image.url }}" alt="{{ auction.title }} Image" class="card-img-top">
                 {% endif %}
+                <div class="card-body">
+                    <h3 class="card-title">{{ auction.title }}</h3>
+                    <p class="card-text">
+                        <strong>Winner:</strong> {{ auction.winner.username }}
+                    </p>
+                    <p class="card-text font-weight-bold text-primary">
+                        Winning Amount: ${{ auction.current_bid }}
+                    </p>
+                </div>
+                <div class="card-footer">
+                    {% if current_user == auction.winner %}
+                    <a href="{% url 'dashboard:purchase_process' auction.id %}" class="btn btn-primary">Apply for Purchase</a>
+                    {% endif %}
+                </div>
             </div>
+            {% endfor %}
         </div>
-        {% endfor %}
-    </div>
+    {% else %}
+        <div class="not-winner-message">Sorry ! <br> You are not a winner.</div>
+    {% endif %}
 </div>
 {% endblock %}
