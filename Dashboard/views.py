@@ -600,20 +600,17 @@ def purchase_process(request, auction_id):
     })
 
 
-from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse
-from django.contrib.auth.decorators import login_required
-from .models import Auction
 
 @login_required
 def confirm_papers(request, auction_id):
     auction = get_object_or_404(Auction, id=auction_id)
     
-    # Assuming you have a field in the Auction model to track paper confirmation
+    
     auction.papers_confirmed = True
     auction.save()
 
-    return HttpResponse("Thank you! You have confirmed the preparation of papers. The buyer will be notified accordingly.")
+    return render(request, 'confirm_papers.html')
+
 
 
 
