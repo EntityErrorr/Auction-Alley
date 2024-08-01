@@ -25,6 +25,7 @@ class Auction(models.Model):
     house_size = models.IntegerField(null=True, blank=True)
     image = models.ImageField(upload_to='images/auction_item_images/')
     winner = models.ForeignKey(User, related_name='won_auctions', on_delete=models.SET_NULL, null=True, blank=True)
+    papers_confirmed = models.BooleanField(default=False)
     
 
     APPROVAL_CHOICES = [
@@ -112,3 +113,4 @@ class RefundRequest(models.Model):
     def __str__(self):
         return self.reason  
     
+

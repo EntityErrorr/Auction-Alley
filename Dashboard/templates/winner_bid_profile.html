@@ -99,6 +99,9 @@
                 <div class="card-footer">
                     {% if current_user == auction.winner %}
                     <a href="{% url 'dashboard:purchase_process' auction.id %}" class="btn btn-primary">Apply for Purchase</a>
+                    {% if auction.papers_confirmed %}
+                    <a href="{% url 'dashboard:request_papers' auction.id %}" class="btn btn-success">Request for Papers</a>
+                    {% endif %}
                     {% endif %}
                 </div>
             </div>

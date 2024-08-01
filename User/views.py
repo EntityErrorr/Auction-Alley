@@ -309,3 +309,4 @@ def seller_profile_view(request,id):
     seller=Seller.objects.get(pk=id)
     print(seller)
     return render(request,'seller_profile.html',{'seller': seller})
+

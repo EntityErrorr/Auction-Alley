@@ -13,22 +13,22 @@
     {% else %}
         <form method="post">
             {% csrf_token %}
-            <div class="form-group">
+            <div class="mt-4">
+                <h2>Property Details</h2>
+                <p><strong>Title:</strong> {{ auction.title }}</p>
+                <p><strong>Description:</strong> {{ auction.description }}</p>
+                <p><strong>Category:</strong> {{ auction.category }}</p>
+                <p><strong>Address:</strong> {{ auction.address }}</p>
+                <p><strong>Size:</strong> {{ auction.house_size }} sqft.</p>
+                <p><strong>Winning Amount:</strong> ${{ auction.current_bid }}</p>
+                <p><strong>Seller:</strong> <a href="{% url 'User:seller_profile_view' auction.seller.id %}">{{ auction.seller.profile.user.username }}</a></p>
+            </div>
+
+            <div class="form-group mt-4">
                 <label for="confirm">Confirm Purchase</label>
                 <button type="submit" class="btn btn-primary">Confirm</button>
             </div>
         </form>
     {% endif %}
-
-    <div class="mt-4">
-        <h2>Property Details</h2>
-        <p><strong>Title:</strong> {{ auction.title }}</p>
-        <p><strong>Description:</strong> {{ auction.description }}</p>
-        <p><strong>Category:</strong> {{ auction.category }}</p>
-        <p><strong>Address:</strong> {{ auction.address }}</p>
-        <p><strong>Size:</strong> {{ auction.house_size }} sqft.</p>
-        <p><strong>Winning Amount:</strong> ${{ auction.current_bid }}</p>
-        <p><strong>Seller:</strong> <a href="{% url 'User:seller_profile_view' auction.seller.id %}">{{ auction.seller.profile.user.username }}</a></p>
-    </div>
 </div>
 {% endblock %}

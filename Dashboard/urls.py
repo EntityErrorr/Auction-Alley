@@ -29,6 +29,16 @@ urlpatterns = [
     path('watchlist/add/<int:auction_id>/', views.add_to_watchlist, name='add_to_watchlist'),
     path('watchlist/remove/<int:auction_id>/', views.remove_from_watchlist, name='remove_from_watchlist'),
     path('watchlist/', views.view_watchlist, name='view_watchlist'),
+    path('confirm_papers/<int:auction_id>/', views.confirm_papers, name='confirm_papers'),
+    path('purchase_success/', views.purchase_success, name='purchase_success'),
+    path('request_papers/<int:auction_id>/', views.request_papers, name='request_papers'),
+    
+   
+
+    
+    
+
+   
 ]
 
 
