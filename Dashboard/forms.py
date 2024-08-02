@@ -98,3 +98,12 @@ class RefundRequestForm(forms.ModelForm):
     class Meta:
         model = RefundRequest
         fields = ['reason', 'bank_branch', 'bank_account_number']
+
+
+from django import forms
+from .models import HousePaper
+
+class HousePaperForm(forms.ModelForm):
+    class Meta:
+        model = HousePaper
+        fields = ['paper']

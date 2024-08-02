@@ -600,6 +600,9 @@ def purchase_process(request, auction_id):
     })
 
 
+from django.shortcuts import render, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from .models import Auction
 
 @login_required
 def confirm_papers(request, auction_id):
@@ -623,8 +626,8 @@ def purchase_success(request):
 @login_required
 def request_papers(request, auction_id):
     auction = get_object_or_404(Auction, id=auction_id)
-    # Handle the request for papers logic here
-    return HttpResponse("Your request for papers has been sent successfully.")
+    
+    return render(request, 'request_papers.html')
 
 # dashboard/views.py
 
@@ -661,3 +664,48 @@ def view_watchlist(request):
     # Ensure the Watchlist instance exists
     watchlist, created = Watchlist.objects.get_or_create(user=request.user)
     return render(request, 'watchlist.html', {'watchlist': watchlist})
+
+
+
+
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from .models import Auction
+from .forms import HousePaperForm
+
+@login_required
+def upload_house_paper(request):
+    # Fetch the first auction related to the current user
+    auctions = Auction.objects.filter(seller__profile__user=request.user)  # Fetch auctions where the user is the seller
+
+    if not auctions:
+        messages.error(request, 'No auctions found for the current seller.')
+        return render(request, 'upload_house_paper.html')
+
+    auction = auctions.first()  
+
+    if request.method == 'POST':
+        form = HousePaperForm(request.POST, request.FILES)
+        if form.is_valid():
+            # Handle file upload and other form processing here
+            form.instance.auction = auction  # Associate the uploaded paper with the auction
+            form.save()
+            messages.success(request, 'House paper uploaded successfully.')
+            return render(request, 'upload_house_paper.html', {
+                'auction': auction,
+                'seller_name': request.user.username,
+                'seller_email': request.user.email,
+                'seller_phone': request.user.profile.phone_number,
+                'form': form,
+            })
+    else:
+        form = HousePaperForm()
+
+    context = {
+        'auction': auction,
+        'seller_name': request.user.username,
+        'seller_email': request.user.email,
+        'form': form,
+    }
+    return render(request, 'upload_house_paper.html', context)

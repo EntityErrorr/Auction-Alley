@@ -32,6 +32,10 @@ urlpatterns = [
     path('confirm_papers/<int:auction_id>/', views.confirm_papers, name='confirm_papers'),
     path('purchase_success/', views.purchase_success, name='purchase_success'),
     path('request_papers/<int:auction_id>/', views.request_papers, name='request_papers'),
+    path('upload-house-paper/', views.upload_house_paper, name='upload_house_paper'),
+    
+    
+    
     
    
 

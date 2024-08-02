@@ -114,3 +114,12 @@ class RefundRequest(models.Model):
         return self.reason  
     
 
+
+class HousePaper(models.Model):
+    auction = models.ForeignKey(Auction, on_delete=models.CASCADE)
+    seller = models.ForeignKey(User, on_delete=models.CASCADE)
+    paper = models.FileField(upload_to='house_papers/')
+    upload_date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Paper for {self.auction.title} by {self.seller.username}"
