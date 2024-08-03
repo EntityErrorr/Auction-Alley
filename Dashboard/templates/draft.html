@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>House Paper for {{ auction.title }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .details {
+            margin-bottom: 20px;
+        }
+        .details p {
+            margin: 0 0 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>House Paper</h1>
+        <div class="details">
+            <p><strong>Title:</strong> {{ auction.title }}</p>
+            <p><strong>Description:</strong> {{ auction.description }}</p>
+            <p><strong>Address:</strong> {{ auction.address }}</p>
+            <p><strong>Size:</strong> {{ auction.house_size }} sqft.</p>
+            <p><strong>Seller:</strong> {{ seller_profile.user.username }}</p>
+        </div>
+        <h2>Seller Information</h2>
+        <div class="details">
+            <p><strong>Seller Name:</strong> {{ seller_profile.user.username }}</p>
+            <p><strong>Email:</strong> {{ seller_profile.user.email }}</p>
+            <p><strong>Phone:</strong> {{ seller_profile.phone }}</p>
+            <p><strong>Address:</strong> {{ seller_profile.address }}</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -46,7 +46,10 @@
                             <form method="post" enctype="multipart/form-data" action="{% url 'dashboard:upload_house_paper' %}">
                                 {% csrf_token %}
                                 {{ form.as_p }}
-                                <button type="submit" class="btn btn-primary">Submit</button>
+                                <div class="d-flex justify-content-between">
+                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                    <button type="button" class="btn btn-warning">Send to Buyer</button>
+                                </div>
                             </form>
                         {% else %}
                             <div class="not-winner-message" style="text-align: center; font-size: 24px; color: #dc3545; font-weight: bold;">

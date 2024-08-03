@@ -654,3 +654,6 @@ def upload_house_paper(request):
         'form': form,
     }
     return render(request, 'upload_house_paper.html', context)
+
+
+
