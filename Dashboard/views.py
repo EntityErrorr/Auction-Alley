@@ -457,147 +457,92 @@ def winner_bid_profile(request):
 
 
 
-
-
-
-# from django.shortcuts import render, get_object_or_404
-# from django.core.mail import send_mail
-# from django.conf import settings
-# from django.contrib.auth.decorators import login_required
-# from .models import Auction
-
-# @login_required
-# def purchase_process(request, auction_id):
-#     auction = get_object_or_404(Auction, id=auction_id)
-#     purchase_success = False
-
-#     if request.method == 'POST':
-#         subject_user = 'Purchase Confirmation'
-#         message_user = f'''
-#         Dear {request.user.username},
-
-#         Congratulations!
-
-#         You have successfully purchased the property "{auction.title}".
-
-#         The winning amount is ${auction.current_bid}.
-
-#         Thank you for using our auction service.
-
-#         Best regards,
-#         Auction Alley Team
-#         '''
-#         from_email = settings.DEFAULT_FROM_EMAIL
-#         recipient_list_user = [request.user.email]
-
-#         send_mail(subject_user, message_user, from_email, recipient_list_user)
-#         print(f'Email sent successfully to the user {request.user.email}')
-
-#         # Notify the seller
-#         if auction.seller and auction.seller.profile and auction.seller.profile.user:
-#             subject_seller = 'Your Property Has Been Purchased'
-#             message_seller = f'''
-#             Dear {auction.seller.profile.user.username},
-
-#             Congratulations!
-
-#             Your property "{auction.title}" has been purchased successfully.
-
-#             The winning amount is ${auction.current_bid}.
-
-#             Please prepare the necessary paperwork for the transaction.
-
-#             Thank you for using our auction service.
-
-#             Best regards,
-#             Auction Alley Team
-#             '''
-#             recipient_list_seller = [auction.seller.profile.user.email]
-
-#             send_mail(subject_seller, message_seller, from_email, recipient_list_seller)
-#             print(f'Email sent successfully to the seller {auction.seller.profile.user.email}')
-
-#         purchase_success = True
-
-#     return render(request, 'purchase_process.html', {
-#         'auction': auction,
-#         'purchase_success': purchase_success
-#     })
-
-
-
-# code 
-# In your app's views.py (e.g., dashboard/views.py)
 from django.urls import reverse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
-from .models import Auction
+from Dashboard.models import Auction
+from User.models import Profile
 
 @login_required
 def purchase_process(request, auction_id):
     auction = get_object_or_404(Auction, id=auction_id)
+    user_profile = get_object_or_404(Profile, user=request.user)
     purchase_success = False
+    deposit_required = auction.current_bid
 
     if request.method == 'POST':
-        subject_user = 'Purchase Confirmation'
-        message_user = f'''
-        Dear {request.user.username},
+        if user_profile.amount >= deposit_required:
+            # Deduct the purchase amount from the user's balance
+            user_profile.amount -= deposit_required
+            user_profile.save()
 
-        Congratulations!
-
-        You have successfully purchased the property "{auction.title}".
-
-        The winning amount is ${auction.current_bid}.
-
-        Thank you for using our auction service.
-
-        Best regards,
-        Auction Alley Team
-        '''
-        from_email = settings.DEFAULT_FROM_EMAIL
-        recipient_list_user = [request.user.email]
-
-        send_mail(subject_user, message_user, from_email, recipient_list_user)
-        print(f'Email sent successfully to the user {request.user.email}')
-
-        # Notify the seller
-        if auction.seller and auction.seller.profile and auction.seller.profile.user:
-            confirm_url = request.build_absolute_uri(reverse('dashboard:confirm_papers', args=[auction.id]))
-            subject_seller = 'Your Property Has Been Purchased'
-            message_seller = f'''
-            Dear {auction.seller.profile.user.username},
+            subject_user = 'Purchase Confirmation'
+            message_user = f'''
+            Dear {request.user.username},
 
             Congratulations!
 
-            Your property "{auction.title}" has been purchased successfully.
+            You have successfully purchased the property "{auction.title}".
 
             The winning amount is ${auction.current_bid}.
-
-            Please prepare the necessary paperwork for the transaction.
-
-            To confirm the preparation of the papers, please click the link below:
-            {confirm_url}
 
             Thank you for using our auction service.
 
             Best regards,
             Auction Alley Team
             '''
-            recipient_list_seller = [auction.seller.profile.user.email]
+            from_email = settings.DEFAULT_FROM_EMAIL
+            recipient_list_user = [request.user.email]
 
-            send_mail(subject_seller, message_seller, from_email, recipient_list_seller)
-            print(f'Email sent successfully to the seller {auction.seller.profile.user.email}')
+            send_mail(subject_user, message_user, from_email, recipient_list_user)
+            print(f'Email sent successfully to the user {request.user.email}')
 
-        purchase_success = True
+            # Notify the seller
+            if auction.seller and auction.seller.profile and auction.seller.profile.user:
+                confirm_url = request.build_absolute_uri(reverse('dashboard:confirm_papers', args=[auction.id]))
+                subject_seller = 'Your Property Has Been Purchased'
+                message_seller = f'''
+                Dear {auction.seller.profile.user.username},
 
-        return redirect('dashboard:purchase_success')
+                Congratulations!
+
+                Your property "{auction.title}" has been purchased successfully.
+
+                The winning amount is ${auction.current_bid}.
+
+                Please prepare the necessary paperwork for the transaction.
+
+                To confirm the preparation of the papers, please click the link below:
+                {confirm_url}
+
+                Thank you for using our auction service.
+
+                Best regards,
+                Auction Alley Team
+                '''
+                recipient_list_seller = [auction.seller.profile.user.email]
+
+                send_mail(subject_seller, message_seller, from_email, recipient_list_seller)
+                print(f'Email sent successfully to the seller {auction.seller.profile.user.email}')
+
+            purchase_success = True
+
+            return redirect('dashboard:purchase_success')
+        else:
+            return render(request, 'purchase_process.html', {
+                'auction': auction,
+                'purchase_success': purchase_success,
+                'error': 'Insufficient funds. Please deposit the required amount first.'
+            })
 
     return render(request, 'purchase_process.html', {
         'auction': auction,
-        'purchase_success': purchase_success
+        'purchase_success': purchase_success,
+        'error': None
     })
+
 
 
 from django.shortcuts import render, get_object_or_404
