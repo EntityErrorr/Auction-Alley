@@ -456,7 +456,6 @@ def winner_bid_profile(request):
     return render(request, 'winner_bid_profile.html', context)
 
 
-
 from django.urls import reverse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.core.mail import send_mail
@@ -469,7 +468,6 @@ from User.models import Profile
 def purchase_process(request, auction_id):
     auction = get_object_or_404(Auction, id=auction_id)
     user_profile = get_object_or_404(Profile, user=request.user)
-    purchase_success = False
     deposit_required = auction.current_bid
 
     if request.method == 'POST':
@@ -527,19 +525,21 @@ def purchase_process(request, auction_id):
                 send_mail(subject_seller, message_seller, from_email, recipient_list_seller)
                 print(f'Email sent successfully to the seller {auction.seller.profile.user.email}')
 
-            purchase_success = True
+            # Set purchase_success to True
+            auction.purchase_success = True
+            auction.save()
 
             return redirect('dashboard:purchase_success')
         else:
             return render(request, 'purchase_process.html', {
                 'auction': auction,
-                'purchase_success': purchase_success,
+                'purchase_success': False,
                 'error': 'Insufficient funds. Please deposit the required amount first.'
             })
 
     return render(request, 'purchase_process.html', {
         'auction': auction,
-        'purchase_success': purchase_success,
+        'purchase_success': False,
         'error': None
     })
 
@@ -615,75 +615,6 @@ from django.contrib import messages
 from .models import Auction
 from .forms import HousePaperForm
 
-# @login_required
-# def upload_house_paper(request):
-#     # Fetch the first auction related to the current user
-#     auctions = Auction.objects.filter(seller__profile__user=request.user)  # Fetch auctions where the user is the seller
-
-#     if not auctions:
-#         messages.error(request, 'No auctions found for the current seller.')
-#         return render(request, 'upload_house_paper.html')
-
-#     auction = auctions.first()  
-
-#     if request.method == 'POST':
-#         form = HousePaperForm(request.POST, request.FILES)
-#         if form.is_valid():
-#             # Handle file upload and other form processing here
-#             form.instance.auction = auction  # Associate the uploaded paper with the auction
-#             form.save()
-#             messages.success(request, 'House paper uploaded successfully.')
-#             return render(request, 'upload_house_paper.html', {
-#                 'auction': auction,
-#                 'seller_name': request.user.username,
-#                 'seller_email': request.user.email,
-#                 'seller_phone': request.user.profile.phone_number,
-#                 'form': form,
-#             })
-#     else:
-#         form = HousePaperForm()
-
-#     context = {
-#         'auction': auction,
-#         'seller_name': request.user.username,
-#         'seller_email': request.user.email,
-#         'form': form,
-#     }
-#     return render(request, 'upload_house_paper.html', context)
-
-
-
-# @login_required
-# def upload_house_paper(request):
-#     # Fetch the first auction related to the current user
-#     auctions = Auction.objects.filter(seller__profile__user=request.user)  # Fetch auctions where the user is the seller
-
-#     if not auctions:
-#         messages.error(request, 'No auctions found for the current seller.')
-#         return render(request, 'upload_house_paper.html')
-
-#     auction = auctions.first()  
-
-#     if request.method == 'POST':
-#         form = HousePaperForm(request.POST, request.FILES)
-#         if form.is_valid():
-#             house_paper = form.save(commit=False)
-#             house_paper.auction = auction  # Associate the uploaded paper with the auction
-#             house_paper.seller = request.user  # Set the seller to the current user
-#             house_paper.save()
-#             messages.success(request, 'House paper uploaded successfully.')
-#             # return redirect('dashboard:success_url')  # Redirect to a success page or back to the upload form
-#     else:
-#         form = HousePaperForm()
-
-#     context = {
-#         'auction': auction,
-#         'seller_name': request.user.username,
-#         'seller_email': request.user.email,
-        
-#         'form': form,
-#     }
-#     return render(request, 'upload_house_paper.html', context)
 
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required

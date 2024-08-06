@@ -98,17 +98,23 @@
                 </div>
                 <div class="card-footer">
                     {% if current_user == auction.winner %}
-                    <a href="{% url 'dashboard:purchase_process' auction.id %}" class="btn btn-primary">Apply for Purchase</a>
-                    {% if auction.papers_confirmed %}
-                    <a href="{% url 'dashboard:request_papers' auction.id %}" class="btn btn-success">Request for Papers</a>
-                    {% endif %}
+                        {% if auction.purchase_success %}
+                            <div class="alert alert-success" role="alert">
+                                Your purchase has been completed successfully!
+                            </div>
+                        {% else %}
+                            <a href="{% url 'dashboard:purchase_process' auction.id %}" class="btn btn-primary">Apply for Purchase</a>
+                        {% endif %}
+                        {% if auction.papers_confirmed %}
+                            <a href="{% url 'dashboard:request_papers' auction.id %}" class="btn btn-success">Request for Papers</a>
+                        {% endif %}
                     {% endif %}
                 </div>
             </div>
             {% endfor %}
         </div>
     {% else %}
-        <div class="not-winner-message">Sorry ! <br> You are not a winner.</div>
+        <div class="not-winner-message">Sorry! <br> You are not a winner.</div>
     {% endif %}
 </div>
 {% endblock %}

@@ -26,6 +26,7 @@ class Auction(models.Model):
     image = models.ImageField(upload_to='images/auction_item_images/')
     winner = models.ForeignKey(User, related_name='won_auctions', on_delete=models.SET_NULL, null=True, blank=True)
     papers_confirmed = models.BooleanField(default=False)
+    purchase_success = models.BooleanField(default=False)
     
 
     APPROVAL_CHOICES = [
