@@ -33,7 +33,8 @@ urlpatterns = [
     path('purchase_success/', views.purchase_success, name='purchase_success'),
     path('request_papers/<int:auction_id>/', views.request_papers, name='request_papers'),
     path('upload-house-paper/', views.upload_house_paper, name='upload_house_paper'),
-    # path('generate-pdf/', views.generate_pdf_view, name='generate_pdf_view'),
+    path('send-house-paper/', views.send_house_paper_to_buyer, name='send_house_paper_to_buyer'),
+    
     
     
     

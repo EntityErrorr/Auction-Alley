@@ -18,39 +18,47 @@
                         {% endif %}
                         
                         {% if auction %}
-                            <!-- Title centered and bold -->
                             <h6 style="text-align: center; font-weight: bold; font-size: 24px;">Upload House Paper for "{{ auction.title }}"</h6>
                             <hr class="mt-0 mb-4">
                             
-                            <!-- Display auction details -->
                             <div class="mb-4">
                                 <h6 style="text-align: center; font-weight: bold; font-size: 20px;">House Information:</h6>
                                 {% if auction.image %}
                                     <img src="{{ auction.image.url }}" alt="{{ auction.title }} Image" class="img-fluid mb-3" style="max-width: 80%; height: auto; margin: 0 auto; display: block;">
                                 {% endif %}
                                 <p><strong>Title:</strong> {{ auction.title }}</p>
+                                <p><strong>Winner:</strong> {{ auction.winner.username }}</p>
                                 <p><strong>Winning Amount:</strong> ${{ auction.current_bid }}</p>
                                 <p><strong>Winning Date:</strong> {{ auction.end_time|date:"F j, Y" }}</p>
                             </div>
                             
-                            <!-- Display seller's information -->
                             <div class="mb-4">
                                 <h6>Seller's Information:</h6>
                                 <p><strong>Seller Name:</strong> {{ seller_name }}</p>
                                 <p><strong>Seller Email:</strong> {{ seller_email }}</p>
-                                <p><strong>Seller Phone:</strong> {{ seller_phone }}</p>
                                 <p><strong>Auction ID:</strong> {{ auction.id }}</p>
                             </div>
+
                             
-                            <!-- Form for uploading house paper -->
-                            <form method="post" enctype="multipart/form-data" action="{% url 'dashboard:upload_house_paper' %}">
-                                {% csrf_token %}
-                                {{ form.as_p }}
-                                <div class="d-flex justify-content-between">
-                                    <button type="submit" class="btn btn-primary">Submit</button>
-                                    <button type="button" class="btn btn-warning">Send to Buyer</button>
+                            {% if house_paper_uploaded %}
+                                <div class="alert alert-success" role="alert" style="text-align: center;">
+                                    House paper uploaded successfully. You can now send it to the buyer.
                                 </div>
-                            </form>
+                                <div class="d-flex justify-content-center">
+                                    <form method="post" action="{% url 'dashboard:send_house_paper_to_buyer'%}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-warning">Send to Buyer</button>
+                                    </form>
+                                </div>
+                            {% else %}
+                                <form method="post" enctype="multipart/form-data" action="{% url 'dashboard:upload_house_paper' %}">
+                                    {% csrf_token %}
+                                    {{ form.as_p }}
+                                    <div class="d-flex justify-content-between">
+                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                    </div>
+                                </form>
+                            {% endif %}
                         {% else %}
                             <div class="not-winner-message" style="text-align: center; font-size: 24px; color: #dc3545; font-weight: bold;">
                                 No auction information available. <br>Become a Seller first
