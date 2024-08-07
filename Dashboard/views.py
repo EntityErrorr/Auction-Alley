@@ -11,10 +11,15 @@ from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
 
 # views.py
+# views.py
+
 from django.utils import timezone
 from django.shortcuts import get_object_or_404, render
-from .models import Auction, Bid, Comment, Watchlist,RefundRequest
-from .forms import NewCommentForm,RefundRequestForm
+from .models import Auction, Bid, Comment, Watchlist
+from .forms import NewCommentForm
+from django.http import HttpResponseRedirect
+from django.urls import reverse
+from django.contrib.auth.decorators import login_required
 
 def AuctionItem(request, auction_id):
     auction = get_object_or_404(Auction, pk=auction_id)
@@ -46,8 +51,6 @@ def AuctionItem(request, auction_id):
             "seconds_left": seconds_left,
         })
 
-
-        
 @login_required
 def comment(request, auction_id):
     auction = Auction.objects.get(pk=auction_id) 
@@ -61,21 +64,22 @@ def comment(request, auction_id):
             return HttpResponseRedirect(reverse("dashboard:AuctionItem", args=(auction.id,)))
     else:
         form = NewCommentForm()
-        return render(request, "AuctionItem.html", {'form':form})
+        return render(request, "AuctionItem.html", {'form': form})
 
 def LiveAuction(request):
     live_auctions = Auction.objects.filter(
         approval_status='approved',
         end_time__gt=timezone.now()
     ).exclude(creation_date__gt=timezone.now()).order_by('-creation_date')
-    return render(request, "searchresults.html", {"auctions": live_auctions, 'name':'Live Auction'})
+    return render(request, "searchresults.html", {"auctions": live_auctions, 'name': 'Live Auction'})
 
 def UpcomingAuction(request):
-    live_auctions = Auction.objects.filter(
+    upcoming_auctions = Auction.objects.filter(
         approval_status='approved',
         creation_date__gt=timezone.now()
     ).order_by('-creation_date')
-    return render(request, "searchresults.html", {"auctions": live_auctions, 'name':'Upcoming Auction'})
+    return render(request, "searchresults.html", {"auctions": upcoming_auctions, 'name': 'Upcoming Auction'})
+
 
 def past_auctions(request):
     past_auctions = Auction.objects.filter(approval_status='approved',end_time__lt=timezone.now()).order_by('-creation_date')

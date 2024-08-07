@@ -27,6 +27,7 @@ class Auction(models.Model):
     winner = models.ForeignKey(User, related_name='won_auctions', on_delete=models.SET_NULL, null=True, blank=True)
     papers_confirmed = models.BooleanField(default=False)
     purchase_success = models.BooleanField(default=False)
+    start_time = models.DateTimeField(default=timezone.now)  
     
 
     APPROVAL_CHOICES = [
@@ -45,6 +46,9 @@ class Auction(models.Model):
     @classmethod
     def get_past_auctions(cls):
         return cls.objects.filter(end_time__lt=timezone.now())
+    @property
+    def is_upcoming(self):
+        return self.creation_date > timezone.now()
 
 
 # define the model of a bid
