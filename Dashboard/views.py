@@ -396,6 +396,8 @@ def advanced_search_properties(request):
 
     return render(request, 'home.html')
 
+from .forms import RefundRequestForm
+
 def refund_request(request):
     if request.method == 'POST':
         form = RefundRequestForm(request.POST)
