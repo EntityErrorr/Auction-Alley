@@ -414,12 +414,26 @@ from .models import Auction
 from .forms import RefundRequestForm
 
 def refund_request(request):
-    auction = Auction.objects.filter(winner=request.user, refund_requested=False).first()
+    # Retrieve the first auction where the current user is the winner
+    auction = Auction.objects.filter(winner=request.user).first()
 
     if not auction:
-        # If no valid auction is found, redirect to the winner profile with a message
-        return render(request, 'refund.html', {'error_message': "You need to request a refund first before accessing this page."})
+        # If no auction is found, redirect to the profile page
+        return redirect('dashboard:winner_bid_profile')
 
+    if not auction.purchase_success:
+        # Ensure the purchase was successful before allowing a refund request
+        return redirect('dashboard:winner_bid_profile')
+
+    # Check if the user has clicked the "Request for Refund" button
+    ref = request.GET.get('ref')
+    if not ref or ref != 'approve':
+        # If the query parameter is not present or incorrect, show the refund_request_required page
+        return render(request, 'refund_request_required.html', {'auction': auction})
+
+    if auction.refund_requested:
+        # If refund has already been requested, display a message or redirect
+        return render(request, 'refund_request_required.html', {'auction': auction})
 
     if request.method == 'POST':
         form = RefundRequestForm(request.POST)
@@ -434,14 +448,26 @@ def refund_request(request):
             auction.refund_requested = True
             auction.save()
 
+            # Set a session variable to show a success message
+            request.session['refund_requested'] = True
+
             # Redirect back to the winner's profile page
             return redirect('dashboard:winner_bid_profile')
 
     else:
         form = RefundRequestForm()
 
-    return render(request, 'refund.html', {'form': form, 'auction': auction})
+    # Handle success message from the session
+    success_message = None
+    if 'refund_requested' in request.session:
+        success_message = "Refund request submitted successfully."
+        del request.session['refund_requested']
 
+    return render(request, 'refund.html', {
+        'form': form,
+        'auction': auction,
+        'success_message': success_message
+    })
 
 
 @login_required 

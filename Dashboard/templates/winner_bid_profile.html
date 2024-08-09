@@ -102,7 +102,7 @@
                         </div>
                         <a href="{% url 'dashboard:request_papers' auction.id %}" class="btn btn-success">Request for Papers</a>
                         {% if not auction.refund_requested %}
-                            <a href="{% url 'dashboard:refund' %}" class="btn btn-warning">Request for Refund</a>
+                            <a href="{% url 'dashboard:refund' %}?ref=approve" class="btn btn-warning">Request for Refund</a>
                         {% else %}
                             <div class="alert alert-info" role="alert">
                                 Refund Requested
