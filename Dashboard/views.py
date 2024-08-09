@@ -396,18 +396,53 @@ def advanced_search_properties(request):
 
     return render(request, 'home.html')
 
+# from .forms import RefundRequestForm
+
+# def refund_request(request):
+#     if request.method == 'POST':
+#         form = RefundRequestForm(request.POST)
+#         if form.is_valid():
+#             form.user=request.user
+#             form.save()  
+#             return redirect('User:home')
+#     else:
+#         form = RefundRequestForm()
+#     return render(request, 'refund.html', {'form': form})
+
+from django.shortcuts import get_object_or_404, redirect, render
+from .models import Auction
 from .forms import RefundRequestForm
 
 def refund_request(request):
+    auction = Auction.objects.filter(winner=request.user, refund_requested=False).first()
+
+    if not auction:
+        # If no valid auction is found, redirect to the winner profile with a message
+        return render(request, 'refund.html', {'error_message': "You need to request a refund first before accessing this page."})
+
+
     if request.method == 'POST':
         form = RefundRequestForm(request.POST)
         if form.is_valid():
-            form.user=request.user
-            form.save()  
-            return redirect('User:home')
+            # Save the refund request and associate it with the auction and user
+            refund_request = form.save(commit=False)
+            refund_request.user = request.user
+            refund_request.auction = auction
+            refund_request.save()
+
+            # Mark the auction as having a refund requested
+            auction.refund_requested = True
+            auction.save()
+
+            # Redirect back to the winner's profile page
+            return redirect('dashboard:winner_bid_profile')
+
     else:
         form = RefundRequestForm()
-    return render(request, 'refund.html', {'form': form})
+
+    return render(request, 'refund.html', {'form': form, 'auction': auction})
+
+
 
 @login_required 
 def create_auction(request):

@@ -81,7 +81,6 @@
     {% if is_winner %}
         <div class="middle-title">Congratulations!</div>
         <div class="card-deck">
-            <!-- Auctions Won by the Logged-in User -->
             {% for auction in past_auctions %}
             <div class="card">
                 {% if auction.image %}
@@ -97,17 +96,20 @@
                     </p>
                 </div>
                 <div class="card-footer">
-                    {% if current_user == auction.winner %}
-                        {% if auction.purchase_success %}
-                            <div class="alert alert-success" role="alert">
-                                Your purchase has been completed successfully!
-                            </div>
+                    {% if auction.purchase_success %}
+                        <div class="alert alert-success" role="alert">
+                            Your purchase has been completed successfully!
+                        </div>
+                        <a href="{% url 'dashboard:request_papers' auction.id %}" class="btn btn-success">Request for Papers</a>
+                        {% if not auction.refund_requested %}
+                            <a href="{% url 'dashboard:refund' %}" class="btn btn-warning">Request for Refund</a>
                         {% else %}
-                            <a href="{% url 'dashboard:purchase_process' auction.id %}" class="btn btn-primary">Apply for Purchase</a>
+                            <div class="alert alert-info" role="alert">
+                                Refund Requested
+                            </div>
                         {% endif %}
-                        {% if auction.papers_confirmed %}
-                            <a href="{% url 'dashboard:request_papers' auction.id %}" class="btn btn-success">Request for Papers</a>
-                        {% endif %}
+                    {% else %}
+                        <a href="{% url 'dashboard:purchase_process' auction.id %}" class="btn btn-primary">Apply for Purchase</a>
                     {% endif %}
                 </div>
             </div>
@@ -117,4 +119,5 @@
         <div class="not-winner-message">Sorry! <br> You are not a winner.</div>
     {% endif %}
 </div>
+
 {% endblock %}

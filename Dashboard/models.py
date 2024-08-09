@@ -27,7 +27,8 @@ class Auction(models.Model):
     winner = models.ForeignKey(User, related_name='won_auctions', on_delete=models.SET_NULL, null=True, blank=True)
     papers_confirmed = models.BooleanField(default=False)
     purchase_success = models.BooleanField(default=False)
-    start_time = models.DateTimeField(default=timezone.now)  
+    start_time = models.DateTimeField(default=timezone.now)
+    refund_requested = models.BooleanField(default=False)  
     
 
     APPROVAL_CHOICES = [
