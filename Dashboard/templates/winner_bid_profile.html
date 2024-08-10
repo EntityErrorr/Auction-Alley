@@ -78,6 +78,16 @@
 </style>
 
 <div class="container my-5">
+    {% if messages %}
+        <div class="alert-container">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} text-center">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    
     {% if is_winner %}
         <div class="middle-title">Congratulations!</div>
         <div class="card-deck">
@@ -119,5 +129,6 @@
         <div class="not-winner-message">Sorry! <br> You are not a winner.</div>
     {% endif %}
 </div>
+
 
 {% endblock %}

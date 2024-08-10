@@ -1,14 +1,12 @@
+<!-- refund_request_required.html -->
 {% extends 'basee.html' %}
 
 {% block content %}
-<div class="container mt-4">
-    <div class="alert alert-info text-center">
-        {% if auction.refund_requested %}
-            You have already requested a refund for this auction.
-        {% else %}
-            Please click the "Request for Refund" button on your profile to request a refund.
-        {% endif %}
+<div class="container mt-4 rounded" style="background-color: rgba(0, 0, 58, 0.95);">
+    <h3 style="color: white; text-align: center; margin-top: 20px;">Refund Request Required</h3>
+    <div class="alert alert-danger" role="alert">
+        You need to request a refund first before accessing this page.
     </div>
-    <a href="{% url 'dashboard:winner_bid_profile' %}" class="btn btn-primary">Back to Profile</a>
+    <a href="{% url 'dashboard:winner_bid_profile' %}" class="btn btn-light mt-3">Back to Profile</a>
 </div>
 {% endblock %}
