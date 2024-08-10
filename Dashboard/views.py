@@ -11,10 +11,15 @@ from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
 
 # views.py
+# views.py
+
 from django.utils import timezone
 from django.shortcuts import get_object_or_404, render
-from .models import Auction, Bid, Comment, Watchlist,RefundRequest
-from .forms import NewCommentForm,RefundRequestForm
+from .models import Auction, Bid, Comment, Watchlist
+from .forms import NewCommentForm
+from django.http import HttpResponseRedirect
+from django.urls import reverse
+from django.contrib.auth.decorators import login_required
 
 def AuctionItem(request, auction_id):
     auction = get_object_or_404(Auction, pk=auction_id)
@@ -46,8 +51,6 @@ def AuctionItem(request, auction_id):
             "seconds_left": seconds_left,
         })
 
-
-        
 @login_required
 def comment(request, auction_id):
     auction = Auction.objects.get(pk=auction_id) 
@@ -61,21 +64,22 @@ def comment(request, auction_id):
             return HttpResponseRedirect(reverse("dashboard:AuctionItem", args=(auction.id,)))
     else:
         form = NewCommentForm()
-        return render(request, "AuctionItem.html", {'form':form})
+        return render(request, "AuctionItem.html", {'form': form})
 
 def LiveAuction(request):
     live_auctions = Auction.objects.filter(
         approval_status='approved',
         end_time__gt=timezone.now()
     ).exclude(creation_date__gt=timezone.now()).order_by('-creation_date')
-    return render(request, "searchresults.html", {"auctions": live_auctions, 'name':'Live Auction'})
+    return render(request, "searchresults.html", {"auctions": live_auctions, 'name': 'Live Auction'})
 
 def UpcomingAuction(request):
-    live_auctions = Auction.objects.filter(
+    upcoming_auctions = Auction.objects.filter(
         approval_status='approved',
         creation_date__gt=timezone.now()
     ).order_by('-creation_date')
-    return render(request, "searchresults.html", {"auctions": live_auctions, 'name':'Upcoming Auction'})
+    return render(request, "searchresults.html", {"auctions": upcoming_auctions, 'name': 'Upcoming Auction'})
+
 
 def past_auctions(request):
     past_auctions = Auction.objects.filter(approval_status='approved',end_time__lt=timezone.now()).order_by('-creation_date')
@@ -392,16 +396,79 @@ def advanced_search_properties(request):
 
     return render(request, 'home.html')
 
+# from .forms import RefundRequestForm
+
+# def refund_request(request):
+#     if request.method == 'POST':
+#         form = RefundRequestForm(request.POST)
+#         if form.is_valid():
+#             form.user=request.user
+#             form.save()  
+#             return redirect('User:home')
+#     else:
+#         form = RefundRequestForm()
+#     return render(request, 'refund.html', {'form': form})
+
+from django.shortcuts import get_object_or_404, redirect, render
+from .models import Auction
+from .forms import RefundRequestForm
+
 def refund_request(request):
+    # Retrieve the first auction where the current user is the winner
+    auction = Auction.objects.filter(winner=request.user).first()
+
+    if not auction:
+        # If no auction is found, redirect to the profile page
+        return redirect('dashboard:winner_bid_profile')
+
+    if not auction.purchase_success:
+        # Ensure the purchase was successful before allowing a refund request
+        return redirect('dashboard:winner_bid_profile')
+
+    # Check if the user has clicked the "Request for Refund" button
+    ref = request.GET.get('ref')
+    if not ref or ref != 'approve':
+        # If the query parameter is not present or incorrect, show the refund_request_required page
+        return render(request, 'refund_request_required.html', {'auction': auction})
+
+    if auction.refund_requested:
+        # If refund has already been requested, display a message or redirect
+        return render(request, 'refund_request_required.html', {'auction': auction})
+
     if request.method == 'POST':
         form = RefundRequestForm(request.POST)
         if form.is_valid():
-            form.user=request.user
-            form.save()  
-            return redirect('User:home')
+            # Save the refund request and associate it with the auction and user
+            refund_request = form.save(commit=False)
+            refund_request.user = request.user
+            refund_request.auction = auction
+            refund_request.save()
+
+            # Mark the auction as having a refund requested
+            auction.refund_requested = True
+            auction.save()
+
+            # Set a session variable to show a success message
+            request.session['refund_requested'] = True
+
+            # Redirect back to the winner's profile page
+            return redirect('dashboard:winner_bid_profile')
+
     else:
         form = RefundRequestForm()
-    return render(request, 'refund.html', {'form': form})
+
+    # Handle success message from the session
+    success_message = None
+    if 'refund_requested' in request.session:
+        success_message = "Refund request submitted successfully."
+        del request.session['refund_requested']
+
+    return render(request, 'refund.html', {
+        'form': form,
+        'auction': auction,
+        'success_message': success_message
+    })
+
 
 @login_required 
 def create_auction(request):

@@ -11,60 +11,58 @@
                 <!-- auction listing details-->
                 <div class="col-md-6">
                     <div class="card-body">
-                    <h5 class="card-title fs-1"><a href="{% url 'dashboard:AuctionItem' auction.id %}" style="color: inherit;"><strong>{{ auction.title }}</strong></a></h5>
-                    
-                    <!-- watching badge -->
-                    {% if user.is_authenticated %}
-                        {% if watching %}
-                        <h5><span class="badge badge-dark">Watching</span></h5>
+                        <h5 class="card-title fs-1">
+                            <a href="{% url 'dashboard:AuctionItem' auction.id %}" style="color: inherit;"><strong>{{ auction.title }}</strong></a>
+                        </h5>
+                        
+                        <!-- watching badge -->
+                        {% if user.is_authenticated %}
+                            {% if watching %}
+                            <h5><span class="badge badge-dark">Watching</span></h5>
+                            {% endif %}
                         {% endif %}
-                    {% endif %}
 
-                    <p class="card-text "> <span class="fw-semibold">Description: </span>{{ auction.description }}</p>
-                    <p class="card-text "><span class="fw-semibold">Address: </span>{{ auction.address }}</p>
-                    <p class="card-text "><span class="fw-semibold">Category: </span>{{ auction.category }}</p>
-                    <p class="card-text mb-4"><span class="fw-semibold">Size: </span>{{ auction.house_size }} sq ft.</p>
-                    <h3 class="mb-2"><span><strong style="font-size: 23px">Starting Bid:</strong></span><strong style="font-size: 18px"><p>BDT {{ auction.starting_bid }}</p></strong></h3>
-                    <h3 class="mb-2"><span><strong style="font-size: 23px">Current Bid:</strong></span><strong style="font-size: 18px"><p>BDT {{ auction.current_bid }}</p></strong></h3>
-                    <p class="card-text "><span class="fw-semibold">Seller: </span><a class="link-primary link-offset-2" href="{% url 'User:seller_profile_view' auction.seller.id %}">{{ auction.seller.profile.user.username }}</a></p>
-                    <p><small>Created on: {{ auction.creation_date }}</small></p>
-                    <p><small>Updated on: {{ auction.update_date }}</small></p>
-                    <span class="form-text text-muted">{{ bid_Num }} Bid(s) so far.</span> <br>
-                    
-                    <a href="{% url 'dashboard:bitplacement' auction.id %}" class="btn btn-primary btn-lg my-3"> Place Bid</a>
-
-                            {% if not auction.closed  %}
-                        <div class="container" id="button_group">
-                            <div class="row">
-                                <div class="col-4">
-                                    <!--Watchlist button -->
-                                    {% if user.is_authenticated %}
-                                        {% if not watching %}
-                                        <form action="{% url 'dashboard:add_to_watchlist' auction.id %}" method="post">
-                                            {% csrf_token %} 
-                                            <button type="submit" id="watchlist_button" class="btn btn-outline-primary" style="width: 150px">Add to Wishlist</button>
-                                        </form>
-                                        {% else %}
-                                        <form action="{% url 'dashboard:remove_from_watchlist' auction.id %}" method="post">
-                                            {% csrf_token %} 
-                                            <button type="submit" id="watchlist_button2" class="btn btn-outline-primary" style="width: 200px">Remove from Wishlist</button>
-                                        </form>
-                                        {% endif %}
-                                    {% endif %}
-                                </div>
-                            </div> 
-                        </div>
-
+                        <p class="card-text "><span class="fw-semibold">Description: </span>{{ auction.description }}</p>
+                        <p class="card-text "><span class="fw-semibold">Address: </span>{{ auction.address }}</p>
+                        <p class="card-text "><span class="fw-semibold">Category: </span>{{ auction.category }}</p>
+                        <p class="card-text mb-4"><span class="fw-semibold">Size: </span>{{ auction.house_size }} sq ft.</p>
+                        <h3 class="mb-2"><span><strong style="font-size: 23px">Starting Bid:</strong></span><strong style="font-size: 18px"><p>BDT {{ auction.starting_bid }}</p></strong></h3>
+                        <h3 class="mb-2"><span><strong style="font-size: 23px">Current Bid:</strong></span><strong style="font-size: 18px"><p>BDT {{ auction.current_bid }}</p></strong></h3>
+                        <p class="card-text "><span class="fw-semibold">Seller: </span><a class="link-primary link-offset-2" href="{% url 'User:seller_profile_view' auction.seller.id %}">{{ auction.seller.profile.user.username }}</a></p>
+                        <p><small>Created on: {{ auction.creation_date }}</small></p>
+                        <p><small>Updated on: {{ auction.update_date }}</small></p>
+                        <span class="form-text text-muted">{{ bid_Num }} Bid(s) so far.</span> <br>
+                        
+                        <!-- Place Bid button -->
+                        {% if auction.is_upcoming %}
+                            <button type="button" class="btn btn-primary btn-lg my-3" disabled>Auction Not Started</button>
                         {% else %}
-                            <!-- {% if highest_bidder %}
-                                {% if user.is_authenticated and user == highest_bidder %}
-                                <p><strong>Congratulation! You won the bid.</strong></p>
-                                {% else %}
-                                <p>The bid winner is <strong>{{ highest_bidder.username }}</strong>.</p>
-                                {% endif %}
-                            {% else %}
-                                <p>No bid winner.</p>
-                            {% endif %}    -->
+                            <a href="{% url 'dashboard:bitplacement' auction.id %}" class="btn btn-primary btn-lg my-3">Place Bid</a>
+                        {% endif %}
+
+                        {% if not auction.closed %}
+                            <div class="container" id="button_group">
+                                <div class="row">
+                                    <div class="col-4">
+                                        <!--Watchlist button -->
+                                        {% if user.is_authenticated %}
+                                            {% if not watching %}
+                                            <form action="{% url 'dashboard:add_to_watchlist' auction.id %}" method="post">
+                                                {% csrf_token %} 
+                                                <button type="submit" id="watchlist_button" class="btn btn-outline-primary" style="width: 150px">Add to Wishlist</button>
+                                            </form>
+                                            {% else %}
+                                            <form action="{% url 'dashboard:remove_from_watchlist' auction.id %}" method="post">
+                                                {% csrf_token %} 
+                                                <button type="submit" id="watchlist_button2" class="btn btn-outline-primary" style="width: 200px">Remove from Wishlist</button>
+                                            </form>
+                                            {% endif %}
+                                        {% endif %}
+                                    </div>
+                                </div> 
+                            </div>
+                        {% else %}
+                            <!-- Additional content for closed auctions -->
                         {% endif %} 
                     </div>
                 </div>
@@ -77,63 +75,54 @@
     <!-- comment form -->
     {% if user.is_authenticated %}
         <div class="container my-5" id="comment_block">
-        <h4 class="fs-2 fw-bolder mb-3"><u>Leave your comment</u> </h4>
-        <form action="{% url 'dashboard:comment' auction.id %}" method="post">
-            {% csrf_token %} 
+            <h4 class="fs-2 fw-bolder mb-3"><u>Leave your comment</u></h4>
+            <form action="{% url 'dashboard:comment' auction.id %}" method="post">
+                {% csrf_token %}
 
-            <div class="row mb-2">
-                <div class="col">
-                    <div><label class="fs-5 fw-semibold">Headline:</label></div>
-                    <div>{{ commentForm.headline }}</div>
+                <div class="row mb-2">
+                    <div class="col">
+                        <div><label class="fs-5 fw-semibold">Headline:</label></div>
+                        <div>{{ commentForm.headline }}</div>
+                    </div>
                 </div>
-            </div>
 
-            <div class="row mb-2">
-                <div class="col">
-                    <div><label class="fs-5 fw-semibold">Content:</label></div>
-                    <div>{{ commentForm.message }}</div>
+                <div class="row mb-2">
+                    <div class="col">
+                        <div><label class="fs-5 fw-semibold">Content:</label></div>
+                        <div>{{ commentForm.message }}</div>
+                    </div>
                 </div>
-            </div>
 
-            <div class="row mb-2">
-                <div class="col"> 
-                    <button type="submit" id="comment_button" class="btn btn-primary" style="width: 120px">Submit</button>
-                </div>          
-            </div>
-        </form>
-        
+                <div class="row mb-2">
+                    <div class="col"> 
+                        <button type="submit" id="comment_button" class="btn btn-primary" style="width: 120px">Submit</button>
+                    </div>          
+                </div>
+            </form>
         </div>
     {% endif %}
 
     <!-- comments display -->
     <div class="container" id="comment_display">
-        <h4 class="fs-4 fw-bolder mb-3"><u>Reviews</u> </h4>
+        <h4 class="fs-4 fw-bolder mb-3"><u>Reviews</u></h4>
         {% if comments %}
-
-        {% for comment in comments %}
-        <div class="card bg-light mb-3">
-           
-            <div class="card-header">
-                <strong>{{ comment.user.username }} </strong>
-                <div class="text-muted small">
-                    commented on {{ comment.cm_date }}
-                </div>       
+            {% for comment in comments %}
+            <div class="card bg-light mb-3">
+                <div class="card-header">
+                    <strong>{{ comment.user.username }}</strong>
+                    <div class="text-muted small">
+                        commented on {{ comment.cm_date }}
+                    </div>       
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ comment.headline }}</h5>
+                    <p class="card-text">{{ comment.message }}</p>
+                </div>
             </div>
-            <div class="card-body">
-              <h5 class="card-title">{{ comment.headline }}</h5>
-              <p class="card-text"> {{ comment.message }}</p>
-            </div>
-            
-        </div>
-        {% endfor %}
-
+            {% endfor %}
         {% else %}
         <p>No comments so far.</p>
         {% endif %}
-        
     </div>
 
-    
-
 {% endblock %}
-

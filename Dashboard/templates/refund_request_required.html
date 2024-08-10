@@ -1,0 +1,14 @@
+{% extends 'basee.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="alert alert-info text-center">
+        {% if auction.refund_requested %}
+            You have already requested a refund for this auction.
+        {% else %}
+            Please click the "Request for Refund" button on your profile to request a refund.
+        {% endif %}
+    </div>
+    <a href="{% url 'dashboard:winner_bid_profile' %}" class="btn btn-primary">Back to Profile</a>
+</div>
+{% endblock %}
