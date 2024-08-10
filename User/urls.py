@@ -31,4 +31,8 @@ urlpatterns = [
     path('confirm-membership/', views.confirm_membership, name='confirm_membership'),
     path('confirm-seller/', views.confirm_seller_request, name='confirm_seller_request'),
     
+
+
+
+
 ]

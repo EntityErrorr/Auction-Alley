@@ -8,3 +8,18 @@
         <a href="{% url 'add_to_watchlist' auction.id %}" class="btn btn-primary">Add to Wishlist</a>
     {% endif %}
 {% endif %}
+
+
+
+<div class="auction-details">
+    <h2>{{ auction.title }}</h2>
+    <p>{{ auction.description }}</p>
+    <p><strong>Address:</strong> {{ auction.address }}</p>
+    <p><strong>Current Bid:</strong> ${{ auction.current_bid }}</p>
+
+    {% if user == auction.winner %}
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'User:generate_pdf' auction.id %}">Generate Bill</a>
+        </li>
+    {% endif %}
+</div>

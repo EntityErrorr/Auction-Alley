@@ -10,6 +10,7 @@ from django.contrib import messages
 from django.conf import settings
 from datetime import datetime, timedelta
 from django.contrib.auth.decorators import login_required
+#from .models import Auction
 
 # Create your views here.
 def home(request):
@@ -116,7 +117,12 @@ def user_logout(request):
 @login_required
 def profile_view(request):
     profile = request.user.profile
-    return render(request, 'profile_view.html', {'profile': profile})
+    won_auctions = Auction.objects.filter(winner=request.user)
+
+    return render(request, 'profile_view.html', {
+        'profile': profile,
+        'won_auctions': won_auctions
+    })
 
 @login_required
 def profile_update(request):

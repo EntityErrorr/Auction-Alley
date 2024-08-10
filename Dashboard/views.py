@@ -728,3 +728,72 @@ def request_papers(request, auction_id):
 
     return render(request, 'request_papers.html', {'house_paper_url': house_paper_url})
 
+
+
+from django.shortcuts import get_object_or_404, redirect
+from django.http import HttpResponse
+from django.template.loader import render_to_string
+from xhtml2pdf import pisa
+from django.core.mail import send_mail
+from django.contrib import messages
+from django.utils import timezone
+from django.contrib.auth.decorators import login_required
+from .models import Auction, Bid
+
+@login_required
+def generate_bill_pdf(request, auction_id):
+    auction = get_object_or_404(Auction, id=auction_id)
+
+    # Ensure auction is approved and has ended
+    if auction.approval_status != 'approved' or auction.end_time >= timezone.now():
+        messages.error(request, 'Auction is not eligible for bill generation.')
+        return redirect('dashboard:LiveAuction')
+
+    # Check or set the winner
+    if not auction.winner:
+        highest_bid = Bid.objects.filter(auction=auction).order_by('-bid_price').first()
+        if highest_bid:
+            auction.winner = highest_bid.bider
+            auction.current_bid = highest_bid.bid_price
+            auction.save()
+            send_mail(
+                'Congratulations! You Won the Auction',
+                f'Dear {auction.winner.username},\n\nYou have won the auction for {auction.title} with a bid of ${auction.current_bid}.\n\nThank you for participating!',
+                'no-reply@auctionwebsite.com',
+                [auction.winner.email],
+                fail_silently=False,
+            )
+
+    if auction.winner:
+        # Render the HTML template with context
+        context = {
+            'winner_name': auction.winner.username,
+            'winner_email': auction.winner.email,
+            'auction': auction
+        }
+        html_content = render_to_string('bill_template.html', context)
+
+        # Generate PDF from HTML content
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="bill_{auction_id}.pdf"'
+
+        # Create PDF
+        pisa_status = pisa.CreatePDF(html_content, dest=response)
+
+        if pisa_status.err:
+            messages.error(request, 'Error generating PDF.')
+            return redirect('dashboard:LiveAuction')
+
+        return response
+    else:
+        messages.error(request, 'No winner found for this auction.')
+        return redirect('dashboard:LiveAuction')
+
+
+
+
+
+
+
+
+

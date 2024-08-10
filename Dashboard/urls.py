@@ -34,8 +34,7 @@ urlpatterns = [
     path('request_papers/<int:auction_id>/', views.request_papers, name='request_papers'),
     path('upload-house-paper/', views.upload_house_paper, name='upload_house_paper'),
     path('send-house-paper/', views.send_house_paper_to_buyer, name='send_house_paper_to_buyer'),
-    
-    
+    path('generate-pdf/<int:auction_id>/', views.generate_bill_pdf, name='generate_pdf'),
     
     
     
