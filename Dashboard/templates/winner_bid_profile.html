@@ -1,79 +1,60 @@
-{% extends 'basee.html' %}
 
-{% block title %}Winner Profile{% endblock %}
+
+
+{% extends "basee.html" %}
+
+{% block title %}Winner Bid Profile{% endblock %}
 
 {% block content %}
 <style>
-    .container {
-        margin-top: 50px;
+    .middle-title {
+        font-size: 2rem;
+        color: #4a4a4a;
+        font-weight: bold;
     }
-    .card-deck {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 20px;
-    }
+
     .card {
-        flex: 0 1 30%;
-        border: none;
         border-radius: 10px;
-        overflow: hidden;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s;
     }
-    .card img {
-        width: 100%;
-        height: 200px;
+
+    .card:hover {
+        transform: scale(1.05);
+    }
+
+    .card-img-top {
+        max-height: 150px;
         object-fit: cover;
     }
-    .card-body {
-        padding: 20px;
-        background-color: #fff;
+
+    .btn {
+        border-radius: 5px;
     }
-    .card-title {
-        font-size: 20px;
-        font-weight: bold;
-        margin-bottom: 15px;
-        text-align: center;
+
+    .btn-outline-secondary:hover {
+        background-color: #6c757d;
+        color: #fff;
     }
-    .card-text {
-        font-size: 18px;
-        margin-bottom: 10px;
-        text-align: center;
+
+    .btn-outline-success:hover {
+        background-color: #28a745;
+        color: #fff;
     }
-    .card-footer {
-        text-align: center;
-        background-color: transparent;
-        border: none;
-        padding: 10px;
+
+    .btn-outline-warning:hover {
+        background-color: #ffc107;
+        color: #fff;
     }
-    .btn-primary {
+
+    .btn-outline-primary:hover {
         background-color: #007bff;
-        border-color: #007bff;
+        color: #fff;
     }
-    .btn-primary:hover {
-        background-color: #0056b3;
-        border-color: #004085;
-    }
-    .middle-title {
-        text-align: center;
-        font-size: 28px;
-        font-weight: bold;
-        margin-top: 20px;
-        margin-bottom: 20px;
-    }
-    .winner-name {
-        font-size: 30px;
-        font-weight: bold;
-        color: #28a745;
-        text-align: center;
-        margin-bottom: 20px;
-    }
+
     .not-winner-message {
-        text-align: center;
-        font-size: 24px;
-        color: #dc3545;
+        font-size: 1.5rem;
+        color: #f39c12;
         font-weight: bold;
-        margin-top: 50px;
     }
 </style>
 
@@ -89,46 +70,54 @@
     {% endif %}
     
     {% if is_winner %}
-        <div class="middle-title">Congratulations!</div>
-        <div class="card-deck">
+        <div class="middle-title text-center mb-4">Congratulations!</div>
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
             {% for auction in past_auctions %}
-            <div class="card">
-                {% if auction.image %}
-                <img src="{{ auction.image.url }}" alt="{{ auction.title }} Image" class="card-img-top">
-                {% endif %}
-                <div class="card-body">
-                    <h3 class="card-title">{{ auction.title }}</h3>
-                    <p class="card-text">
-                        <strong>Winner:</strong> {{ auction.winner.username }}
-                    </p>
-                    <p class="card-text font-weight-bold text-primary">
-                        Winning Amount: ${{ auction.current_bid }}
-                    </p>
-                </div>
-                <div class="card-footer">
-                    {% if auction.purchase_success %}
-                        <div class="alert alert-success" role="alert">
-                            Your purchase has been completed successfully!
-                        </div>
-                        <a href="{% url 'dashboard:request_papers' auction.id %}" class="btn btn-success">Request for Papers</a>
-                        {% if not auction.refund_requested %}
-                            <a href="{% url 'dashboard:refund' %}?ref=approve" class="btn btn-warning">Request for Refund</a>
-                        {% else %}
-                            <div class="alert alert-info" role="alert">
-                                Refund Requested
-                            </div>
-                        {% endif %}
-                    {% else %}
-                        <a href="{% url 'dashboard:purchase_process' auction.id %}" class="btn btn-primary">Apply for Purchase</a>
+            <div class="col">
+                <div class="card h-100 shadow-sm">
+                    {% if auction.image %}
+                    <img src="{{ auction.image.url }}" alt="{{ auction.title }} Image" class="card-img-top img-fluid">
                     {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ auction.title }}</h5>
+                        <p class="card-text">
+                            <strong>Winner:</strong> {{ auction.winner.username }}
+                        </p>
+                        <p class="card-text font-weight-bold text-primary">
+                            Winning Amount: ${{ auction.current_bid }}
+                        </p>
+                    </div>
+                    <div class="card-footer text-center">
+                        {% if current_user == auction.winner %}
+                            <a href="{% url 'dashboard:generate_pdf' auction_id=auction.id %}" class="btn btn-outline-secondary btn-sm my-1">Generate Bill</a>
+
+                            {% if auction.purchase_success %}
+                                <div class="alert alert-success mt-2" role="alert">
+                                    Your purchase has been completed successfully!
+                                </div>
+                                <a href="{% url 'dashboard:request_papers' auction.id %}" class="btn btn-outline-success btn-sm my-1">Request for Papers</a>
+                                {% if not auction.refund_requested %}
+                                    <a href="{% url 'dashboard:refund' %}?ref=approve" class="btn btn-outline-warning btn-sm my-1">Request for Refund</a>
+                                {% else %}
+                                    <div class="alert alert-info mt-2" role="alert">
+                                        Refund Requested
+                                    </div>
+                                {% endif %}
+                            {% else %}
+                                <a href="{% url 'dashboard:purchase_process' auction.id %}" class="btn btn-outline-primary btn-sm my-1">Apply for Purchase</a>
+                            {% endif %}
+                        {% endif %}
+                    </div>
                 </div>
             </div>
             {% endfor %}
         </div>
     {% else %}
-        <div class="not-winner-message">Sorry! <br> You are not a winner.</div>
+        <div class="not-winner-message text-center mt-4 alert alert-warning">Sorry! <br> You are not a winner.</div>
     {% endif %}
 </div>
 
-
 {% endblock %}
+
+
+

@@ -1,0 +1,97 @@
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bill PDF</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            font-size: 12px;
+        }
+        .container {
+            width: 100%;
+            max-width: 800px;
+            margin: auto;
+            padding: 15px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 16px;
+            color: #007bff;
+        }
+        .header h2 {
+            margin: 5px 0;
+            font-size: 14px;
+            color: #333;
+        }
+        .section {
+            margin-bottom: 20px;
+        }
+        .section-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .section p {
+            margin: 5px 0;
+            font-size: 12px;
+        }
+        .highlight {
+            font-weight: bold;
+            color: #28a745;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 10px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>AuctionAlley</h1>
+            <h2>Bill of Sale</h2>
+        </div>
+
+        <!-- Bank Copy Section -->
+        <div class="section">
+            <div class="section-title">Bank Copy</div>
+            <p><strong>Date:</strong> {{ date }}</p>
+            <p><strong>Transaction ID:</strong> {{ transaction_id }}</p>
+            <p><strong>Bank Details:</strong> Bank Name, Account Number, Sort Code</p>
+            <p><strong>Property:</strong> "{{ auction.title }}"</p>
+            <p><strong>Winner:</strong> {{ auction.winner.username }}</p>
+            <p><strong>Winning Amount:</strong> ${{ auction.current_bid }}</p>
+            <p><strong>Email:</strong> {{ winner_email }}</p>
+        </div>
+
+        <!-- User Copy Section -->
+        <div class="section">
+            <div class="section-title">User Copy</div>
+            <p>Congratulations <span class="highlight">{{ auction.winner.username }}</span>!</p>
+            <p>You have successfully purchased the property <span class="highlight">"{{ auction.title }}"</span>.</p>
+            <p>Winning amount: <span class="highlight">${{ auction.current_bid }}</span></p>
+            <p>Email: {{ winner_email }}</p>
+            <p>This document serves as proof of purchase.</p>
+        </div>
+
+        <div class="footer">
+            <p>Thank you for participating in AuctionAlley.</p>
+        </div>
+    </div>
+</body>
+</html>
+
