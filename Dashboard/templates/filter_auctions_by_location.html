@@ -1,0 +1,85 @@
+
+
+{% extends "basee.html" %}
+
+{% block content %}
+<div class="container my-5">
+    <h1 class="text-center mb-4">Auction Properties in {{ location }}</h1>
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        {% for auction in auctions %}
+        <div class="col">
+            <div class="card h-100 shadow-lg border-light">
+                {% if auction.image %}
+                <img src="{{ auction.image.url }}" alt="{{ auction.title }} Image" class="card-img-top img-fluid auction-image">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ auction.title }}</h5>
+                    <p class="card-text">
+                        {{ auction.description|slice:":100" }}{% if auction.description|length > 100 %}...{% endif %}
+                    </p>
+                    <p class="card-text font-weight-bold text-primary">
+                        Starting Bid: ${{ auction.starting_bid }}
+                    </p>
+                    <p class="card-text font-weight-bold text-secondary">
+                        Current Bid: ${{ auction.current_bid }}
+                    </p>
+                    <p class="card-text">
+                        <strong>Address:</strong> {{ auction.address }}
+                    </p>
+                    <p class="card-text">
+                        <strong>End Time:</strong> {{ auction.end_time }}
+                    </p>
+                    <p class="card-text">
+                        <strong>Status:</strong> {{ auction.approval_status }}
+                    </p>
+                </div>
+                <div class="card-footer text-center">
+                    <a href="{% url 'dashboard:filter_auctions_by_location' auction.address %}" class="btn btn-outline-primary">See More</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <p class="text-center font-weight-bold text-warning">No auctions found in this location.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% block extra_styles %}
+<style>
+    .auction-image {
+        width: 100%; /* Ensures the image fits the width of the card */
+        height: 200px; /* Adjust height as needed */
+        object-fit: cover; /* Ensures the image covers the area without distortion */
+        border-bottom: 1px solid #ddd; /* Adds a border below the image */
+    }
+    .card {
+        transition: transform 0.2s ease-in-out; /* Adds a smooth scaling effect on hover */
+    }
+    .card:hover {
+        transform: scale(1.02); /* Slightly enlarges the card on hover */
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2); /* Adds a more prominent shadow on hover */
+    }
+    .card-body {
+        padding: 1.25rem; /* Adds padding inside the card body */
+    }
+    .card-footer {
+        background-color: #f8f9fa; /* Light background for the card footer */
+        border-top: 1px solid #ddd; /* Adds a border on top of the footer */
+    }
+    .btn-outline-primary {
+        border-color: #007bff; /* Primary color border */
+        color: #007bff; /* Primary color text */
+    }
+    .btn-outline-primary:hover {
+        background-color: #007bff; /* Primary color background on hover */
+        color: #fff; /* White text on hover */
+    }
+</style>
+{% endblock %}
+{% endblock %}
+
+
+
+

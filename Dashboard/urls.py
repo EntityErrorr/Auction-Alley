@@ -36,6 +36,7 @@ urlpatterns = [
     path('send-house-paper/', views.send_house_paper_to_buyer, name='send_house_paper_to_buyer'),
     path('generate-pdf/<int:auction_id>/', views.generate_bill_pdf, name='generate_pdf'),
     path('upcoming_auctions/', views.UpcomingAuction, name='UpcomingAuction'),
+    path('auctions/location/<str:location>/', views.filter_auctions_by_location, name='filter_auctions_by_location'),
     
     
     
