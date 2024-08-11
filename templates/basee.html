@@ -91,19 +91,28 @@
                         </ul>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="{% url 'User:home' %}" id="auctionDropdown" role="button" data-bs-toggle="dropdown"
-                            aria-haspopup="true" aria-expanded="false">
-                            Auction
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="auctionDropdown">
-                            <li><a class="dropdown-item" href="{% url 'dashboard:UpcomingAuction' %}">Upcoming Bidding</a></li>
-                            <li><a class="dropdown-item" href="{% url 'dashboard:LiveAuction' %}">Live Bidding</a></li>
-                            <li><a class="dropdown-item" href="{% url 'dashboard:past_auctions' %}">Past Biddings</a></li>
-                            <li><a class="dropdown-item" href="#">Location Bid History</a></li>
-                            <li><a class="dropdown-item" href="{% url 'dashboard:upload_house_paper' %}">Transaction</a></li>
-
-                        </ul>
-                    </li>
+                      <a class="nav-link dropdown-toggle" href="{% url 'User:home' %}" id="auctionDropdown" role="button" data-bs-toggle="dropdown"
+                          aria-haspopup="true" aria-expanded="false">
+                          Auction
+                      </a>
+                      <ul class="dropdown-menu" aria-labelledby="auctionDropdown">
+                          <li><a class="dropdown-item" href="{% url 'dashboard:UpcomingAuction' %}">Upcoming Bidding</a></li>
+                          <li><a class="dropdown-item" href="{% url 'dashboard:LiveAuction' %}">Live Bidding</a></li>
+                          <li><a class="dropdown-item" href="{% url 'dashboard:past_auctions' %}">Past Biddings</a></li>
+                          
+                          <!-- Ensure auction object has address -->
+                          {% if auction and auction.address %}
+                          <li><a class="dropdown-item" href="{% url 'dashboard:filter_auctions_by_location' auction.address %}">See more auctions in {{ auction.address }}</a></li>
+                          {% else %}
+                          <li><span class="dropdown-item disabled">Location Bid History (N/A)</span></li>
+                          {% endif %}
+                  
+                          <li><a class="dropdown-item" href="{% url 'dashboard:upload_house_paper' %}">Transaction</a></li>
+                      </ul>
+                  </li>
+                  
+                  
+                   
                     <li class="nav-item">
                         <a class="nav-link " href="{% url 'dashboard:advisors' %}">Financial Advice</a>
                     </li>

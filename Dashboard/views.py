@@ -840,6 +840,13 @@ def generate_bill_pdf(request, auction_id):
 
 
 
+def filter_auctions_by_location(request, location):
+    auctions = Auction.objects.filter(address__icontains=location)
+    context = {
+        'auctions': auctions,
+        'location': location
+    }
+    return render(request, 'filter_auctions_by_location.html', context)
 
 
 
