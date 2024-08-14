@@ -439,7 +439,7 @@ def refund_request(request):
 
         else:
             # If refund has already been requested, set an info message
-            messages.info(request, "You have already requested a refund for this auction.")
+            messages.info(request, "You request for refund accepted.")
 
         # Redirect back to the profile page
         return redirect('dashboard:winner_bid_profile')

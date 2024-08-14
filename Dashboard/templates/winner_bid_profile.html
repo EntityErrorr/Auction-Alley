@@ -1,6 +1,3 @@
-
-
-
 {% extends "basee.html" %}
 
 {% block title %}Winner Bid Profile{% endblock %}
@@ -23,7 +20,7 @@
     }
 
     .card-img-top {
-        max-height: 150px;
+        height: 200px; /* Adjust the height to make the image bigger */
         object-fit: cover;
     }
 
@@ -89,9 +86,9 @@
                     </div>
                     <div class="card-footer text-center">
                         {% if current_user == auction.winner %}
-                            <a href="{% url 'dashboard:generate_pdf' auction_id=auction.id %}" class="btn btn-outline-secondary btn-sm my-1">Generate Bill</a>
-
                             {% if auction.purchase_success %}
+                                <a href="{% url 'dashboard:generate_pdf' auction_id=auction.id %}" class="btn btn-outline-secondary btn-sm my-1">Generate Bill</a>
+
                                 <div class="alert alert-success mt-2" role="alert">
                                     Your purchase has been completed successfully!
                                 </div>
@@ -99,9 +96,9 @@
                                 {% if not auction.refund_requested %}
                                     <a href="{% url 'dashboard:refund' %}?ref=approve" class="btn btn-outline-warning btn-sm my-1">Request for Refund</a>
                                 {% else %}
-                                    <div class="alert alert-info mt-2" role="alert">
+                                    <!-- <div class="alert alert-info mt-2" role="alert">
                                         Refund Requested
-                                    </div>
+                                    </div> -->
                                 {% endif %}
                             {% else %}
                                 <a href="{% url 'dashboard:purchase_process' auction.id %}" class="btn btn-outline-primary btn-sm my-1">Apply for Purchase</a>
@@ -118,6 +115,3 @@
 </div>
 
 {% endblock %}
-
-
-
