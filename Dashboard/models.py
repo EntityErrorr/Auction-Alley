@@ -28,7 +28,9 @@ class Auction(models.Model):
     papers_confirmed = models.BooleanField(default=False)
     purchase_success = models.BooleanField(default=False)
     start_time = models.DateTimeField(default=timezone.now)
-    refund_requested = models.BooleanField(default=False)  
+    refund_requested = models.BooleanField(default=False)
+    refund_requested_time = models.DateTimeField(null=True, blank=True)
+  
     
 
     APPROVAL_CHOICES = [
@@ -50,6 +52,8 @@ class Auction(models.Model):
     @property
     def is_upcoming(self):
         return self.creation_date > timezone.now()
+    
+   
 
 
 # define the model of a bid
